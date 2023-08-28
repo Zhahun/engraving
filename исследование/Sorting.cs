@@ -11,12 +11,12 @@ using System.Windows.Forms.DataVisualization.Charting;
 namespace исследование
 {
     internal class Sorting
-    { 
+    {
         Coordinates coords;
         public Dictionary<int, Action> sortTypes;
-        public int unsortedCount = 0;
         public int[] sortedX;
         public int[] sortedY;
+        public int unsortedCount = 0;
 
         public Sorting(Coordinates coords)
         {
@@ -53,50 +53,105 @@ namespace исследование
                 x = x1;
                 y = y1;
             }
-            return (long) distance;
+            return (long)distance;
         }
 
         public void Sort1()
         {
-         /*   while (unsortedPoints.Count != 0)
+            HashSet<(int, int)> coordsSet = new HashSet<(int, int)> { };
+            var points = coords.imgX.Zip(coords.imgY, (x, y) => (x, y));
+            foreach ((int, int) point in points)
+                coordsSet.Add(point);
+            int pointsCount = coords.imgX.Count;
+            sortedX = new int[pointsCount];
+            sortedY = new int[pointsCount];  
+            (int, int) startPoint = (0, 0);
+
+            for (int i = 0; i < pointsCount; i++)
             {
-                foreach ((int a, int b) in neighbСoords)
-                {
-                    if (x + a, y + b) in cikl_zadanie
-                    {
-                        min_nom = (x + a, y + b);
-                        break;
-                    }
-                }
-                int min = int.MaxValue;
-                foreach ((int x1, int y1) in cikl_zadanie)
-                {
-                    int dx = x1 - x;
-                    int dy = y1 - y;
-                    int min_temp = dx * dx + dy * dy;
-                    if (min > min_temp)
-                    {
-                        min = min_temp;
-                        min_nom = (x1, y1);
-                    }
-                }
-                (x, y) = min_nom;
-                cikl_zadanie.Remove(min_nom);
-            }*/
+                startPoint = brutForceSearch(startPoint, coordsSet);
+                (sortedX[i], sortedY[i]) = startPoint;
+                coordsSet.Remove(startPoint);
+                unsortedCount = coordsSet.Count;
+            }
         }
 
-        public void Sort2() {}
-        public void Sort3() {}
-        public void Sort4() {}
-        public void Sort5() {}
-        public void Sort6() {}
-    }
+        private (int, int) brutForceSearch((int, int) point, HashSet<(int, int)> coordsSet)
+        {
+            (int x, int y) = point;
+            (int, int)[] neighbСoords = new[] {(-1,0), (-1,1), (0,1), (1,1), (1,0), (1,-1), (0,-1), (-1,-1)};
+            foreach ((int px, int py) in neighbСoords)
+            {
+                (int, int) point1 = (x + px, y + py);
+                if (coordsSet.Contains(point1))
+                    return point1;   
+            } 
+            int minDistance = int.MaxValue;
+            foreach ((int x1, int y1) in coordsSet)
+            {
+                int dx = x1 - x;
+                int dy = y1 - y;
+                int distance = dx*dx+dy*dy;
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    point = (x1, y1);
+                }
+            }
+            return point;
+        }
+
+        public void Sort2()
+        {
+            Dictionary<int, List<int>> Ymap = new Dictionary<int, List<int>> { };
+            foreach (y in coords.ySet)
+            {
+                Ymap.Add(y, new List<int>{});
+            }
+            for (int i=0; i<coords.length; i++)
+            {
+                Ymap[coords.imgY[i]].Add(imgX[i]);
+            }
+
+            int x = 0;
+            int y = 0;
+            int r = 1;
+
+        }
+
+        static int BinarySearch(List<int> list, int value, int last)
+        {
+            int first = 0;
+            int i = value * list.Count / last;
+            while (list[i] < value):
+            {
+                first = list[i];
+                i += value * (list.Count - i) / 
+            }
+
+            while(list[i] > value)
+            {
+                last = list[i];
+                i -= value * (list.Count - i)/(last - first);
+            }
+
+         
+        }
+
+        public void Sort3() { }
+        public void Sort4() { }
+        public void Sort5() { }
+        public void Sort6() { }
+   }
 
     internal class Coordinates
     {
         public List<int> imgX;
         public List<int> imgY;
+        public int width = 0;
+        public int height = 0;
         public int length = 0;
+        public HashSet <int> ySet=new HashSet<int> { };
 
         public Coordinates()
         {
@@ -119,7 +174,7 @@ namespace исследование
             byte[] imgBytes = reader.ReadBytes((int)reader.BaseStream.Length);
             reader.Close();
             fileDialog.Dispose();
-            
+
             if (imgBytes[0] != 0x42 || imgBytes[1] != 0x4D)
                 throw new Exception("Файл не являяется mono bmp");
 
@@ -128,10 +183,12 @@ namespace исследование
 
         private void setupPoints(byte[] imgBytes)
         {
+            
             imgX = new List<int>();
-            imgY = new List<int>(); 
-            int width = BitConverter.ToInt32(imgBytes, 18);
-            int height = BitConverter.ToInt32(imgBytes, 22);
+            imgY = new List<int>();
+            
+            width = BitConverter.ToInt32(imgBytes, 18);
+            height = BitConverter.ToInt32(imgBytes, 22);
             int padding = (4 - width % 32 / 8) % 4; //дополнение байт до 4
             int byteInd = 62;
             int bitInd = 0;
@@ -145,6 +202,7 @@ namespace исследование
                     {
                         imgX.Add(x);
                         imgY.Add(y);
+                        ySet.Add(y);
                     }
                     bitInd++;
                     if (bitInd == 8)

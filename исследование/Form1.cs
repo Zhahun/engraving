@@ -14,6 +14,7 @@ namespace исследование
     {
         Coordinates coords = new Coordinates();
         Sorting sorting = null;
+        Thread sortingThread = null;
         int k_pr_x, k_pr_y;
         private int ris_tik;
         int pointPerTik = 5;
@@ -23,6 +24,7 @@ namespace исследование
             InitializeComponent();
             this.MouseWheel += new MouseEventHandler(this_MouseWheel);
             ris.Interval = 50;
+            ost_sort.Interval=100;
             k_pr_x = Convert.ToInt32(textBox11.Text);
             k_pr_y = Convert.ToInt32(textBox12.Text);
             label23.Text = pointPerTik.ToString();
@@ -31,6 +33,9 @@ namespace исследование
 
         private void button10_Click(object sender, EventArgs e)
         {
+            if (sortingThread != null)
+                sortingThread.Abort();
+
             ris.Stop();
             chart1.Series["raw"].Points.Clear();
             chart1.Series["engraved"].Points.Clear();
@@ -40,15 +45,12 @@ namespace исследование
             {
                 coords.getCoords();
                 chart1.Series["raw"].Points.DataBindXY(coords.imgX, coords.imgY);
-                textBox1.Text = $"Точек: {coords.length} \r\n";
                 sorting = new Sorting(coords);
+                textBox1.Text = "Идёт сортировка...";
                 ThreadStart threadStart = new ThreadStart(sorting.sortTypes[listBox1.SelectedIndex]);
-                Thread thread = new Thread(threadStart);
+                sortingThread = new Thread(threadStart);
+                sortingThread.Start();
                 ost_sort.Start();
-                thread.Start();
-                thread.Join();
-                ost_sort.Stop();
-                textBox1.Text += $"Итоговый путь: {sorting.getDistance()}";
             }
             catch (Exception ex)
             {
@@ -64,7 +66,9 @@ namespace исследование
             if (checkBox3.Checked && sorting != null)
                 ris.Start();
             else
-            {
+            {   
+                chart1.Series["engraved"].Points.
+                chart1.Series["engraved"].Points.AddY
                 chart1.Series["engraved"].Points.Clear();
                 checkBox3.Checked = false;
             }
@@ -88,8 +92,15 @@ namespace исследование
 
         private void ost_sort_Tick(object sender, EventArgs e)
         {
-            textBox1.Text = $"Выполнение, осталось отсортировать точек: {sorting.unsortedCount}";
+            if(sortingThread.IsAlive)
+                textBox1.Text = $"Выполнение, осталось отсортировать точек: {sorting.unsortedCount}";
+            else
+            { 
+                textBox1.Text = $"Точек: {coords.length} \r\n Итоговый путь: {sorting.getDistance()}";
+                ost_sort.Stop();
+            }
         }
+
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
