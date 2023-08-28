@@ -31,6 +31,8 @@ namespace исследование
                 {6, Sort6 },
             };
             this.coords = coords;
+            sortedX = new int[coords.imgX.Count];
+            sortedY = new int[coords.imgX.Count];
         }
 
         public void NonSort()
@@ -61,13 +63,12 @@ namespace исследование
             HashSet<(int, int)> coordsSet = new HashSet<(int, int)> { };
             var points = coords.imgX.Zip(coords.imgY, (x, y) => (x, y));
             foreach ((int, int) point in points)
+            {
                 coordsSet.Add(point);
-            int pointsCount = coords.imgX.Count;
-            sortedX = new int[pointsCount];
-            sortedY = new int[pointsCount];  
+            }
+        
             (int, int) startPoint = (0, 0);
-
-            for (int i = 0; i < pointsCount; i++)
+            for (int i = 0; i < coords.imgX.Count; i++)
             {
                 startPoint = brutForceSearch(startPoint, coordsSet);
                 (sortedX[i], sortedY[i]) = startPoint;
@@ -103,39 +104,69 @@ namespace исследование
 
         public void Sort2()
         {
-            Dictionary<int, List<int>> Ymap = new Dictionary<int, List<int>> { };
-            foreach (y in coords.ySet)
+            List<int> uniqY = new List<int>(coords.uniqY);
+            Dictionary <int, List<int>> YAxisToXValues = new <int, List<int>> [uniqY.Count];
+            // y - значение координаты;
+            foreach (y in uniqY)
             {
-                Ymap.Add(y, new List<int>{});
+                YAxisToXValues.Add(y, new List<int>{});
             }
             for (int i=0; i<coords.length; i++)
             {
-                Ymap[coords.imgY[i]].Add(imgX[i]);
+                YAxisToXValues[coords.imgY[i]].Add(imgX[i]);
             }
 
-            int x = 0;
-            int y = 0;
-            int r = 1;
+            int yIndex = 0;
+            int curY = uniqY[yIndex];
+            int curX = -1;
+            int minX, minY;
+            int minDistance = int.MaxValue;
 
+            for (int i=0; i< coords.length; i++)
+            {
+                while (dy*dy < minDistance)
+                {
+
+                    y = (i1 != 0 & dy1 < dy2) ? YAxisToXValues[--i1]
+                                              : YAxisToXValues[++i1];
+                    x = BinarySearch(YAxisToXValues[y], x)
+                    int dx = curX - x;
+                    int dy = curY - y;
+                    minDistance = dx * dx + dy * dy;
+                }
+               
+                sortedX[i] = x;
+                sortedY[i] = y;
+                curX = x;
+                curY = y;
+            }   
         }
 
-        static int BinarySearch(List<int> list, int value, int last)
+        public int BinarySearch(List<int> list, int value)
         {
+            // i, firs, last - индексы в списке list;
+            int last = list.Count - 1;
             int first = 0;
-            int i = value * list.Count / last;
-            while (list[i] < value):
+            int i = value * last / (list[last] - list[first]);
+           
+            while (first - last > 1) 
             {
-                first = list[i];
-                i += value * (list.Count - i) / 
+                if (value > list[i]):
+                {
+                    first = i;
+                    i = last + value * (last - first) / (list[last] - list[first]);
+                }
+                else
+                {
+                    last = i;
+                    i = first + value * (last - first) / (list[last] - list[first]);
+                }
             }
 
-            while(list[i] > value)
-            {
-                last = list[i];
-                i -= value * (list.Count - i)/(last - first);
-            }
-
-         
+            if (value - first < last-value)
+                return first;
+            else 
+                return last;
         }
 
         public void Sort3() { }
@@ -148,10 +179,8 @@ namespace исследование
     {
         public List<int> imgX;
         public List<int> imgY;
-        public int width = 0;
-        public int height = 0;
         public int length = 0;
-        public HashSet <int> ySet=new HashSet<int> { };
+        public List<int> uniqY = new List<int> { };
 
         public Coordinates()
         {
@@ -187,11 +216,12 @@ namespace исследование
             imgX = new List<int>();
             imgY = new List<int>();
             
-            width = BitConverter.ToInt32(imgBytes, 18);
-            height = BitConverter.ToInt32(imgBytes, 22);
+            int width = BitConverter.ToInt32(imgBytes, 18);
+            int height = BitConverter.ToInt32(imgBytes, 22);
             int padding = (4 - width % 32 / 8) % 4; //дополнение байт до 4
             int byteInd = 62;
             int bitInd = 0;
+            int last_y = null;
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -202,7 +232,8 @@ namespace исследование
                     {
                         imgX.Add(x);
                         imgY.Add(y);
-                        ySet.Add(y);
+                        if (y != last_y)
+                            uniqY.Add(y);
                     }
                     bitInd++;
                     if (bitInd == 8)
