@@ -67,8 +67,6 @@ namespace исследование
                 ris.Start();
             else
             {   
-                chart1.Series["engraved"].Points.
-                chart1.Series["engraved"].Points.AddY
                 chart1.Series["engraved"].Points.Clear();
                 checkBox3.Checked = false;
             }

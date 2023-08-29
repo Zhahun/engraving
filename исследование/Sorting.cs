@@ -105,36 +105,42 @@ namespace исследование
         public void Sort2()
         {
             List<int> uniqY = new List<int>(coords.uniqY);
-            Dictionary <int, List<int>> YAxisToXValues = new <int, List<int>> [uniqY.Count];
+            Dictionary <int, List<int>> YAxisToXValues = new Dictionary <int, List<int>> {};
             // y - значение координаты;
-            foreach (y in uniqY)
+            foreach (int y in uniqY)
             {
                 YAxisToXValues.Add(y, new List<int>{});
             }
             for (int i=0; i<coords.length; i++)
             {
-                YAxisToXValues[coords.imgY[i]].Add(imgX[i]);
+                YAxisToXValues[coords.imgY[i]].Add(coords.imgX[i]);
             }
 
             int yIndex = 0;
+            int yIndexUp = yIndex;
+            int yIndexDown = yIndex;
             int curY = uniqY[yIndex];
             int curX = -1;
-            int minX, minY;
+            int minY = curY;
+            int minX, ;
             int minDistance = int.MaxValue;
 
             for (int i=0; i< coords.length; i++)
             {
-                while (dy*dy < minDistance)
-                {
+                if 
 
+                do 
+                {
+                    int iy1 =  
                     y = (i1 != 0 & dy1 < dy2) ? YAxisToXValues[--i1]
                                               : YAxisToXValues[++i1];
-                    x = BinarySearch(YAxisToXValues[y], x)
-                    int dx = curX - x;
-                    int dy = curY - y;
+                    minX = BinarySearch(YAxisToXValues[y], curX);
+                    int dx = curX - minX;
+                    int dy = curY - minY;
                     minDistance = dx * dx + dy * dy;
                 }
-               
+                while (minDistance > dy*dy);
+
                 sortedX[i] = x;
                 sortedY[i] = y;
                 curX = x;
@@ -151,7 +157,7 @@ namespace исследование
            
             while (first - last > 1) 
             {
-                if (value > list[i]):
+                if (value > list[i])
                 {
                     first = i;
                     i = last + value * (last - first) / (list[last] - list[first]);
@@ -221,7 +227,7 @@ namespace исследование
             int padding = (4 - width % 32 / 8) % 4; //дополнение байт до 4
             int byteInd = 62;
             int bitInd = 0;
-            int last_y = null;
+            int last_y = -1;
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
