@@ -121,49 +121,59 @@ namespace исследование
             int curY = 0;
             for (int i=0; i< coords.length; i++)
             {
-                (curX, curY) = GetNearestCoord(uniqY, curY);
-                sortedX[i] = x;
-                sortedY[i] = y;
+                (curX, curY) = GetNearestCoord (curX,curY, uniqY, YAxisToXValues);
+                int yVal = uniqY[curY];
+                List<int> rowX = YAxisToXValues[yVal];
+                sortedX[i] = rowX[curX];
+                sortedY[i] = yVal;
+                rowX.RemoveAt(curX);
+                if (rowX.Count == 0)
+                    YAxisToXValues.Remove(yVal);
             }   
         }
 
 
-        public (int, int) GetNearestCoord(List<int> uniqY, int curY, int curX)
+        public (int, int) GetNearestCoord(int curX, int curY,
+            List<int> uniqY, Dictionary<int, List<int>> YAxisToXValues)
         {
             // Ищет координаты ближайшей к (curX, curY) точки;
             int minDistance = int.MaxValue;
             // minX, minY индексы YAxisToXValues[Val], YAxisToXValues;
-            int minX, minY;
-            int dx, dy = 0;
+            int minX = 0;
+            int minY = 0;
+            int x;
 
             foreach (int y in YSearch(uniqY, curY))
             {
-                if (minDistance < dy*dy)
+                int yVal = uniqY[y];
+                List<int> rowX = YAxisToXValues[yVal];
+                if (rowX.Count == 1)
+                    x = 0;
+                else
+                    x = BinarySearch(rowX, curX);
+                int xVal = rowX[x];
+                int dx = curX - xVal;
+                int dy = curY - yVal;
+                int distance = dx * dx + dy* dy;
+
+                if (dx == 0 || minDistance < dy * dy)
                 {
                     minY = y;
                     minX = x;
                     break;
                 }
-
-                int yVal = uniqY[y];
-                List<int> rowX = YAxisToXValues[yVal];
-                int x = BinarySearch(YAxisToXValues[y], curX);
-                int xVal = row[x];
-
                 if (distance < minDistance) 
-                {
-                    minDistance = distance;
+                {   
                     minY = y;
                     minX = x;
-                    if (dx = 0)
-                        break;
+                    minDistance = distance;
                 }
             }
             return (minX, minY);
         }
 
 
-        public int YSearch(List<int> uniqY, int yIndex)
+        public IEnumerable<int> YSearch(List<int> uniqY, int yIndex)
         {
             // Генератор, возвращающий индекы чисел в списке uniqY по возрастанию расстояния к uniqY[yIndex];
             // yIndex, up, down - индексы 
@@ -175,22 +185,20 @@ namespace исследование
 
             for (int i = 0; i < uniqY.Count; i++)
 			{
-                if (dyDown > dyUp & up > -1)
-                {
-                    yield return up;
-                    up++;
-                    dyUp = uniqY[up] - y;
-                }
-                else
+                dyUp = uniqY[up] - y;
+                if (dyUp > dyDown & down > 0)
                 {
                     yield return down;
                     down--;
                     dyDown = y - uniqY[down];
                 }
+                else
+                {
+                    yield return up;
+                    up++;
+                }
 			}
         }
-
-
 
         public int BinarySearch(List<int> list, int value)
         {
@@ -213,7 +221,6 @@ namespace исследование
                     i = first + value * (last - first) / (list[last] - list[first]);
                 }
             }
-
             if (value - first < last - value)
                 return first;
             else 
@@ -284,7 +291,11 @@ namespace исследование
                         imgX.Add(x);
                         imgY.Add(y);
                         if (y != last_y)
+                        {
                             uniqY.Add(y);
+                            last_y= y;
+                        }
+                            
                     }
                     bitInd++;
                     if (bitInd == 8)
