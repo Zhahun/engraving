@@ -116,45 +116,43 @@ namespace исследование
                 YAxisToXValues[coords.imgY[i]].Add(coords.imgX[i]);
             }
 
-            // curX, curY индексы YAxisToXValues[Val], YAxisToXValues;
-            int curX = 0;
-            int curY = 0;
+            // indX, indY индексы YAxisToXValues[Val], YAxisToXValues;
+            int indX = 0;
+            int indY = 0;
+            int yVal = uniqY[0];
+
             for (int i=0; i< coords.length; i++)
             {
-                (curX, curY) = GetNearestCoord (curX,curY, uniqY, YAxisToXValues);
-                int yVal = uniqY[curY];
-                List<int> rowX = YAxisToXValues[yVal];
-                sortedX[i] = rowX[curX];
+                (indX, indY) = GetNearestCoord(indX, indY, yVal, uniqY, YAxisToXValues);
+                yVal = uniqY[indY];
+                List <int> rowX = YAxisToXValues[yVal];
+                sortedX[i] = rowX[indX];
                 sortedY[i] = yVal;
-                rowX.RemoveAt(curX);
+                rowX.RemoveAt(indX);
                 if (rowX.Count == 0)
-                    YAxisToXValues.Remove(yVal);
+                {
+                    YAxisToXValues.Remove(uniqY[indY]);
+                    uniqY.RemoveAt(indY);
+                }
+                    
             }   
         }
 
-
-        public (int, int) GetNearestCoord(int curX, int curY,
-            List<int> uniqY, Dictionary<int, List<int>> YAxisToXValues)
+        public (int, int) GetNearestCoord(int indX, int indY, int yVal, List<int> uniqY,
+                                          Dictionary<int, List<int>> YAxisToXValues)
         {
-            // Ищет координаты ближайшей к (curX, curY) точки;
+            // Ищет координаты ближайшей к (indX, indY) точки;
             int minDistance = int.MaxValue;
             // minX, minY индексы YAxisToXValues[Val], YAxisToXValues;
             int minX = 0;
             int minY = 0;
-            int x;
 
-            foreach (int y in YSearch(uniqY, curY))
+            foreach ((int y, int dy) in YSearch(uniqY, indY, yVal))
             {
-                int yVal = uniqY[y];
-                List<int> rowX = YAxisToXValues[yVal];
-                if (rowX.Count == 1)
-                    x = 0;
-                else
-                    x = BinarySearch(rowX, curX);
-                int xVal = rowX[x];
-                int dx = curX - xVal;
-                int dy = curY - yVal;
-                int distance = dx * dx + dy* dy;
+                List<int> rowX = YAxisToXValues[uniqY[y]];
+                (int x, int dx) = BinarySearch(rowX, indX);
+
+                int distance = dx * dx + dy * dy;
 
                 if (dx == 0 || minDistance < dy * dy)
                 {
@@ -173,41 +171,50 @@ namespace исследование
         }
 
 
-        public IEnumerable<int> YSearch(List<int> uniqY, int yIndex)
+        public IEnumerable<(int, int)> YSearch(List<int> uniqY, int yIndex, int yVal)
         {
             // Генератор, возвращающий индекы чисел в списке uniqY по возрастанию расстояния к uniqY[yIndex];
             // yIndex, up, down - индексы 
             int up = yIndex;
-            int down = yIndex;
-            int y = uniqY[yIndex];
-            int dyUp = 0;
-            int dyDown = 0;
+            int down = yIndex - 1;
+            int dyUp, dyDown;
 
-            for (int i = 0; i < uniqY.Count; i++)
+            while (true)
 			{
-                dyUp = uniqY[up] - y;
-                if (dyUp > dyDown & down > 0)
+                if (down > 0 & up < uniqY.Count)
                 {
-                    yield return down;
-                    down--;
-                    dyDown = y - uniqY[down];
+                    dyUp = uniqY[up] - yVal;
+                    dyDown = yVal - uniqY[down];
+                    if (dyDown < dyUp)
+                        yield return (down--, dyDown);
+                    else
+                        yield return (up++, dyUp);
                 }
-                else
+                else if (down > 0)
                 {
-                    yield return up;
-                    up++;
+                    dyDown = yVal - uniqY[down];
+                    yield return (down--, dyDown);
                 }
+                else if (up < uniqY.Count)
+                {
+                    dyUp = uniqY[up] - yVal;
+                    yield return (up++, dyUp);
+                }
+                else break;
 			}
         }
-
-        public int BinarySearch(List<int> list, int value)
+       
+        public (int, int) BinarySearch(List<int> list, int value)
         {
             // Поиск индекса ближайшего к value числа в списке list;
             // i, firs, last - индексы в списке list;
+            if (list.Count == 1)
+                return (0, value - list[0]);
+
             int last = list.Count - 1;
             int first = 0;
             int i = value * last / (list[last] - list[first]);
-           
+
             while (first - last > 1) 
             {
                 if (value > list[i])
@@ -221,10 +228,14 @@ namespace исследование
                     i = first + value * (last - first) / (list[last] - list[first]);
                 }
             }
-            if (value - first < last - value)
-                return first;
+
+            int df = value - list[first];
+            int dl = list[last] - value;
+
+            if (df < dl)
+                return (first, df);
             else 
-                return last;
+                return (last, dl);
         }
 
         public void Sort3() { }
@@ -270,7 +281,7 @@ namespace исследование
 
         private void setupPoints(byte[] imgBytes)
         {
-            
+            uniqY.Clear();
             imgX = new List<int>();
             imgY = new List<int>();
             
