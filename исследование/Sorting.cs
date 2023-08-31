@@ -16,29 +16,23 @@ namespace исследование
         public Dictionary<int, Action> sortTypes;
         public int[] sortedX;
         public int[] sortedY;
-        public int unsortedCount = 0;
+        public int unsortedCount;
 
         public Sorting(Coordinates coords)
         {
             sortTypes = new Dictionary<int, Action>
             {
                 {0, NonSort},
-                {1, Sort1 },
-                {2, Sort2 },
-                {3, Sort3 },
-                {4, Sort4 },
-                {5, Sort5 },
-                {6, Sort6 },
+                {1, BFSort},
+                {2, ProbSort},
+                {3, Sort3},
+                {4, Sort4},
+                {5, Sort5},
+                {6, Sort6},
             };
             this.coords = coords;
             sortedX = new int[coords.imgX.Count];
             sortedY = new int[coords.imgX.Count];
-        }
-
-        public void NonSort()
-        {
-            sortedX = coords.imgX.ToArray();
-            sortedY = coords.imgY.ToArray();
         }
 
         public long getDistance()
@@ -58,133 +52,178 @@ namespace исследование
             return (long)distance;
         }
 
-        public void Sort1()
+        public void NonSort()
         {
-            HashSet<(int, int)> coordsSet = new HashSet<(int, int)> { };
-            var points = coords.imgX.Zip(coords.imgY, (x, y) => (x, y));
-            foreach ((int, int) point in points)
+            sortedX = coords.imgX.ToArray();
+            sortedY = coords.imgY.ToArray();
+        }
+
+        public void BFSort()
+        {
+            BruteForceSort sort = new BruteForceSort(coords);
+            sort.Sort(ref sortedX, ref sortedY, ref unsortedCount);
+        }
+
+        public void ProbSort()
+        {
+            ProbabilitySort sort = new ProbabilitySort(coords);
+            sort.Sort(ref sortedX, ref sortedY, ref unsortedCount);
+        }
+
+        public void Sort3() { }
+        public void Sort4() { }
+        public void Sort5() { }
+        public void Sort6() { }
+    }
+
+    internal class BruteForceSort
+    {
+        HashSet<(int, int)> coordsSet;
+        (int, int)[] neighbors = new[]
+            {(-1, 0), (-1, 1), (0, 1), (1, 1),
+              (1, 0), (1, -1),(0, -1), (-1, -1)};
+        int length;
+
+        public BruteForceSort(Coordinates coords)
+        {
+            length = coords.length;
+            coordsSet = new HashSet<(int, int)> { };
+            for (int i = 0; i < length; i++)
+                coordsSet.Add((coords.imgX[i], coords.imgY[i]));
+        }
+
+        public void Sort(ref int[] sortedX, ref int[] sortedY, ref int unsortedCount)
+        {
+            int x = 0;
+            int y = 0;
+            for (int i = 0; i < length; i++)
             {
-                coordsSet.Add(point);
-            }
-        
-            (int, int) startPoint = (0, 0);
-            for (int i = 0; i < coords.imgX.Count; i++)
-            {
-                startPoint = brutForceSearch(startPoint, coordsSet);
-                (sortedX[i], sortedY[i]) = startPoint;
-                coordsSet.Remove(startPoint);
+                (int, int) point = GetNearestPoint(x, y);
+                (sortedX[i], sortedY[i]) = point;
+                coordsSet.Remove(point);
                 unsortedCount = coordsSet.Count;
             }
         }
 
-        private (int, int) brutForceSearch((int, int) point, HashSet<(int, int)> coordsSet)
+        private (int, int) GetNearestPoint(int x, int y)
         {
-            (int x, int y) = point;
-            (int, int)[] neighbСoords = new[] {(-1,0), (-1,1), (0,1), (1,1), (1,0), (1,-1), (0,-1), (-1,-1)};
-            foreach ((int px, int py) in neighbСoords)
+            foreach ((int px, int py) in neighbors)
             {
-                (int, int) point1 = (x + px, y + py);
-                if (coordsSet.Contains(point1))
-                    return point1;   
-            } 
+                (int, int) point = (x + px, y + py);
+                if (coordsSet.Contains(point))
+                    return point;
+            }
+
             int minDistance = int.MaxValue;
+            int minX = 0;
+            int minY = 0;
             foreach ((int x1, int y1) in coordsSet)
             {
                 int dx = x1 - x;
                 int dy = y1 - y;
-                int distance = dx*dx+dy*dy;
+                int distance = dx * dx + dy * dy;
+
                 if (distance < minDistance)
                 {
                     minDistance = distance;
-                    point = (x1, y1);
+                    minX = x1;
+                    minY = y1;
                 }
             }
-            return point;
+            return (minX, minY);
+        }
+    }
+
+    internal class ProbabilitySort
+    {
+        int indX, indY, xVal, yVal, length;
+        List<int> colY;
+        Dictionary<int, List<int>> YAxisToXValues;
+
+        public ProbabilitySort(Coordinates coords)
+        {
+            colY = coords.uniqY.ToList();
+            YAxisToXValues = new Dictionary<int, List<int>> { };
+
+            foreach (int y in coords.uniqY)
+                YAxisToXValues.Add(y, new List<int> { });
+
+            length = coords.length;
+            for (int i = 0; i < length; i++)
+                YAxisToXValues[coords.imgY[i]].Add(coords.imgX[i]);
+
+            xVal = 0;
+            indY = 0;
+            yVal = colY[0];
         }
 
-        public void Sort2()
+        public void Sort(ref int[] sortedX, ref int[] sortedY, ref int unsortedCount)
         {
-            List<int> uniqY = new List<int>(coords.uniqY);
-            Dictionary <int, List<int>> YAxisToXValues = new Dictionary <int, List<int>> {};
-            // y - значение координаты;
-            foreach (int y in uniqY)
+            unsortedCount = length;
+            for (int i = 0; i < length; i++)
             {
-                YAxisToXValues.Add(y, new List<int>{});
-            }
-            for (int i=0; i<coords.length; i++)
-            {
-                YAxisToXValues[coords.imgY[i]].Add(coords.imgX[i]);
-            }
-
-            // indX, indY индексы YAxisToXValues[Val], YAxisToXValues;
-            int indX = 0;
-            int indY = 0;
-            int yVal = uniqY[0];
-
-            for (int i=0; i< coords.length; i++)
-            {
-                (indX, indY) = GetNearestCoord(indX, indY, yVal, uniqY, YAxisToXValues);
-                yVal = uniqY[indY];
-                List <int> rowX = YAxisToXValues[yVal];
-                sortedX[i] = rowX[indX];
+                (indX, indY) = GetNearestCoord();
+                yVal = colY[indY];
+                List<int> rowX = YAxisToXValues[yVal];
+                xVal = rowX[indX];
+                sortedX[i] = xVal;
                 sortedY[i] = yVal;
                 rowX.RemoveAt(indX);
                 if (rowX.Count == 0)
                 {
-                    YAxisToXValues.Remove(uniqY[indY]);
-                    uniqY.RemoveAt(indY);
+                    colY.RemoveAt(indY);
+                    YAxisToXValues.Remove(yVal);
                 }
-                    
-            }   
+                unsortedCount--;
+            }
         }
 
-        public (int, int) GetNearestCoord(int indX, int indY, int yVal, List<int> uniqY,
-                                          Dictionary<int, List<int>> YAxisToXValues)
+        private (int, int) GetNearestCoord()
         {
             // Ищет координаты ближайшей к (indX, indY) точки;
-            int minDistance = int.MaxValue;
-            // minX, minY индексы YAxisToXValues[Val], YAxisToXValues;
+            // minX, minY индексы;
             int minX = 0;
             int minY = 0;
+            int minDistance = int.MaxValue;
 
-            foreach ((int y, int dy) in YSearch(uniqY, indY, yVal))
+            foreach ((int indY1, int dy) in YSearch())
             {
-                List<int> rowX = YAxisToXValues[uniqY[y]];
-                (int x, int dx) = BinarySearch(rowX, indX);
+                List<int> rowX1 = YAxisToXValues[colY[indY1]];
+                (int indX1, int dx) = BinarySearch(rowX1);
 
                 int distance = dx * dx + dy * dy;
 
                 if (dx == 0 || minDistance < dy * dy)
                 {
-                    minY = y;
-                    minX = x;
+                    minY = indY1;
+                    minX = indX1;
                     break;
                 }
-                if (distance < minDistance) 
-                {   
-                    minY = y;
-                    minX = x;
+
+                if (distance < minDistance)
+                {
+                    minY = indY1;
+                    minX = indX1;
                     minDistance = distance;
                 }
             }
             return (minX, minY);
         }
 
-
-        public IEnumerable<(int, int)> YSearch(List<int> uniqY, int yIndex, int yVal)
+        private IEnumerable<(int, int)> YSearch()
         {
             // Генератор, возвращающий индекы чисел в списке uniqY по возрастанию расстояния к uniqY[yIndex];
             // yIndex, up, down - индексы 
-            int up = yIndex;
-            int down = yIndex - 1;
+            int up = indY;
+            int down = indY - 1;
             int dyUp, dyDown;
 
             while (true)
-			{
-                if (down > 0 & up < uniqY.Count)
+            {
+                if (down > 0 & up < colY.Count)
                 {
-                    dyUp = uniqY[up] - yVal;
-                    dyDown = yVal - uniqY[down];
+                    dyUp = colY[up] - yVal;
+                    dyDown = yVal - colY[down];
                     if (dyDown < dyUp)
                         yield return (down--, dyDown);
                     else
@@ -192,65 +231,59 @@ namespace исследование
                 }
                 else if (down > 0)
                 {
-                    dyDown = yVal - uniqY[down];
+                    dyDown = yVal - colY[down];
                     yield return (down--, dyDown);
                 }
-                else if (up < uniqY.Count)
+                else if (up < colY.Count)
                 {
-                    dyUp = uniqY[up] - yVal;
+                    dyUp = colY[up] - yVal;
                     yield return (up++, dyUp);
                 }
                 else break;
-			}
+            }
         }
-       
-        public (int, int) BinarySearch(List<int> list, int value)
+
+        private (int, int) BinarySearch(List<int> list)
         {
-            // Поиск индекса ближайшего к value числа в списке list;
+            // Поиск индекса ближайшего к xVal числа в списке list;
             // i, firs, last - индексы в списке list;
             if (list.Count == 1)
-                return (0, value - list[0]);
+                return (0, xVal - list[0]);
 
             int last = list.Count - 1;
             int first = 0;
-            int i = value * last / (list[last] - list[first]);
+            int i = xVal * last / (list[last] - list[first]);
 
-            while (first - last > 1) 
+            while (first - last > 1)
             {
-                if (value > list[i])
+                if (xVal > list[i])
                 {
                     first = i;
-                    i = last + value * (last - first) / (list[last] - list[first]);
+                    i = last + xVal * (last - first) / (list[last] - list[first]);
                 }
                 else
                 {
                     last = i;
-                    i = first + value * (last - first) / (list[last] - list[first]);
+                    i = first + xVal * (last - first) / (list[last] - list[first]);
                 }
             }
 
-            int df = value - list[first];
-            int dl = list[last] - value;
+            int df = xVal - list[first];
+            int dl = list[last] - xVal;
 
             if (df < dl)
                 return (first, df);
-            else 
+            else
                 return (last, dl);
         }
-
-        public void Sort3() { }
-        public void Sort4() { }
-        public void Sort5() { }
-        public void Sort6() { }
-   }
+    }
 
     internal class Coordinates
     {
         public List<int> imgX;
         public List<int> imgY;
         public int length = 0;
-        public List<int> uniqY = new List<int> { };
-
+        public HashSet<int> uniqY = new HashSet<int> { };
         public Coordinates()
         {
         }
@@ -284,13 +317,12 @@ namespace исследование
             uniqY.Clear();
             imgX = new List<int>();
             imgY = new List<int>();
-            
+
             int width = BitConverter.ToInt32(imgBytes, 18);
             int height = BitConverter.ToInt32(imgBytes, 22);
             int padding = (4 - width % 32 / 8) % 4; //дополнение байт до 4
             int byteInd = 62;
             int bitInd = 0;
-            int last_y = -1;
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -301,12 +333,7 @@ namespace исследование
                     {
                         imgX.Add(x);
                         imgY.Add(y);
-                        if (y != last_y)
-                        {
-                            uniqY.Add(y);
-                            last_y= y;
-                        }
-                            
+                        uniqY.Add(y);
                     }
                     bitInd++;
                     if (bitInd == 8)
