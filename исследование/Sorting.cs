@@ -94,29 +94,27 @@ namespace исследование
 
         public void Sort(ref int[] sortedX, ref int[] sortedY, ref int unsortedCount)
         {
-            int x = 0;
-            int y = 0;
+            (int, int) point = (0, 0);
             for (int i = 0; i < length; i++)
             {
-                (int, int) point = GetNearestPoint(x, y);
+                point = GetNearestPoint(point);
                 (sortedX[i], sortedY[i]) = point;
                 coordsSet.Remove(point);
                 unsortedCount = coordsSet.Count;
             }
         }
 
-        private (int, int) GetNearestPoint(int x, int y)
+        private (int, int) GetNearestPoint((int, int) point)
         {
+            (int x, int y) = point;
             foreach ((int px, int py) in neighbors)
             {
-                (int, int) point = (x + px, y + py);
-                if (coordsSet.Contains(point))
-                    return point;
+                (int, int) point1 = (x + px, y + py);
+                if (coordsSet.Contains(point1))
+                    return point1;
             }
 
             int minDistance = int.MaxValue;
-            int minX = 0;
-            int minY = 0;
             foreach ((int x1, int y1) in coordsSet)
             {
                 int dx = x1 - x;
@@ -126,11 +124,10 @@ namespace исследование
                 if (distance < minDistance)
                 {
                     minDistance = distance;
-                    minX = x1;
-                    minY = y1;
+                    point = (x1, y1);
                 }
             }
-            return (minX, minY);
+            return point;
         }
     }
 
@@ -192,20 +189,16 @@ namespace исследование
                 (int indX1, int dx) = BinarySearch(rowX1);
 
                 int distance = dx * dx + dy * dy;
-
-                if (dx == 0 || minDistance < dy * dy)
-                {
-                    minY = indY1;
-                    minX = indX1;
-                    break;
-                }
-
+                
                 if (distance < minDistance)
                 {
                     minY = indY1;
                     minX = indX1;
                     minDistance = distance;
                 }
+
+                if (Math.Abs(dx) < 2 || minDistance < dy * dy)
+                    break;
             }
             return (minX, minY);
         }
@@ -220,24 +213,32 @@ namespace исследование
 
             while (true)
             {
-                if (down > 0 & up < colY.Count)
+                if (down >= 0 & up < colY.Count)
                 {
                     dyUp = colY[up] - yVal;
                     dyDown = yVal - colY[down];
                     if (dyDown < dyUp)
-                        yield return (down--, dyDown);
+                    {
+                        yield return (down, dyDown);
+                        down--;
+                    } 
                     else
-                        yield return (up++, dyUp);
+                    {
+                        yield return (up, dyUp);
+                        up++;
+                    }  
                 }
-                else if (down > 0)
+                else if (down >= 0)
                 {
                     dyDown = yVal - colY[down];
-                    yield return (down--, dyDown);
+                    yield return (down, dyDown);
+                    down--;
                 }
                 else if (up < colY.Count)
                 {
                     dyUp = colY[up] - yVal;
-                    yield return (up++, dyUp);
+                    yield return (up, dyUp);
+                    up++;
                 }
                 else break;
             }
@@ -247,25 +248,18 @@ namespace исследование
         {
             // Поиск индекса ближайшего к xVal числа в списке list;
             // i, firs, last - индексы в списке list;
-            if (list.Count == 1)
+            if (list.Count == 1 || xVal < list[0])
                 return (0, xVal - list[0]);
 
             int last = list.Count - 1;
             int first = 0;
             int i = xVal * last / (list[last] - list[first]);
 
-            while (first - last > 1)
+            while (last - first > 1)
             {
-                if (xVal > list[i])
-                {
-                    first = i;
-                    i = last + xVal * (last - first) / (list[last] - list[first]);
-                }
-                else
-                {
-                    last = i;
-                    i = first + xVal * (last - first) / (list[last] - list[first]);
-                }
+                if (xVal > list[i]) first = i;
+                else last = i;
+                i = first + (last - first) * (xVal - list[first]) / (list[last] - list[first]);
             }
 
             int df = xVal - list[first];

@@ -63,13 +63,15 @@ namespace исследование
         {
             ris.Stop();
             ris_tik = 0;
+
             if (checkBox3.Checked && sorting != null)
-                ris.Start();
-            else
-            {   
+            { 
                 chart1.Series["engraved"].Points.Clear();
-                checkBox3.Checked = false;
+                ris.Start();
             }
+               
+            else
+                checkBox3.Checked = false;
         }
 
         private void ris_Tick(object sender, EventArgs e)
