@@ -24,18 +24,18 @@ namespace исследование
             {
                 {0, NonSort},
                 {1, BFSort},
-                {2, ProbSort},
+                {2, IntSort},
                 {3, Sort3},
                 {4, Sort4},
                 {5, Sort5},
                 {6, Sort6},
             };
             this.coords = coords;
-            sortedX = new int[coords.imgX.Count];
-            sortedY = new int[coords.imgX.Count];
+            sortedX = new int[coords.X.Count];
+            sortedY = new int[coords.X.Count];
         }
 
-        public long getDistance()
+        public long GetDistance()
         {
             int x = sortedX[0];
             int y = sortedY[0];
@@ -54,8 +54,8 @@ namespace исследование
 
         public void NonSort()
         {
-            sortedX = coords.imgX.ToArray();
-            sortedY = coords.imgY.ToArray();
+            sortedX = coords.X.ToArray();
+            sortedY = coords.Y.ToArray();
         }
 
         public void BFSort()
@@ -64,9 +64,9 @@ namespace исследование
             sort.Sort(ref sortedX, ref sortedY, ref unsortedCount);
         }
 
-        public void ProbSort()
-        {
-            ProbabilitySort sort = new ProbabilitySort(coords);
+        public void IntSort()
+        { 
+            InterpolationSort sort = new InterpolationSort(coords);
             sort.Sort(ref sortedX, ref sortedY, ref unsortedCount);
         }
 
@@ -78,18 +78,18 @@ namespace исследование
 
     internal class BruteForceSort
     {
-        HashSet<(int, int)> coordsSet;
-        (int, int)[] neighbors = new[]
+        private HashSet<(int, int)> coordsSet;
+        readonly (int, int)[] neighbors = new[]
             {(-1, 0), (-1, 1), (0, 1), (1, 1),
               (1, 0), (1, -1),(0, -1), (-1, -1)};
-        int length;
+        private readonly int length;
 
         public BruteForceSort(Coordinates coords)
         {
             length = coords.length;
             coordsSet = new HashSet<(int, int)> { };
             for (int i = 0; i < length; i++)
-                coordsSet.Add((coords.imgX[i], coords.imgY[i]));
+                coordsSet.Add((coords.X[i], coords.Y[i]));
         }
 
         public void Sort(ref int[] sortedX, ref int[] sortedY, ref int unsortedCount)
@@ -97,14 +97,14 @@ namespace исследование
             (int, int) point = (0, 0);
             for (int i = 0; i < length; i++)
             {
-                point = GetNearestPoint(point);
+                point = FindNearestPoint(point);
                 (sortedX[i], sortedY[i]) = point;
                 coordsSet.Remove(point);
                 unsortedCount = coordsSet.Count;
             }
         }
 
-        private (int, int) GetNearestPoint((int, int) point)
+        private (int, int) FindNearestPoint((int, int) point)
         {
             (int x, int y) = point;
             foreach ((int px, int py) in neighbors)
@@ -131,23 +131,27 @@ namespace исследование
         }
     }
 
-    internal class ProbabilitySort
+    internal class InterpolationSort
     {
-        int indX, indY, xVal, yVal, length;
-        List<int> colY;
-        Dictionary<int, List<int>> YAxisToXValues;
+        private int indX;
+        private int indY;
+        private int xVal;
+        private int yVal;
+        private readonly int length;
+        private List<int> colY;
+        private Dictionary<int, List<int>> YAxisToXValues;
 
-        public ProbabilitySort(Coordinates coords)
+        public InterpolationSort(Coordinates coords)
         {
+            length = coords.length;
             colY = coords.uniqY.ToList();
             YAxisToXValues = new Dictionary<int, List<int>> { };
 
-            foreach (int y in coords.uniqY)
+            foreach (int y in colY)
                 YAxisToXValues.Add(y, new List<int> { });
-
-            length = coords.length;
+            
             for (int i = 0; i < length; i++)
-                YAxisToXValues[coords.imgY[i]].Add(coords.imgX[i]);
+                YAxisToXValues[coords.Y[i]].Add(coords.X[i]);
 
             xVal = 0;
             indY = 0;
@@ -248,18 +252,24 @@ namespace исследование
         {
             // Поиск индекса ближайшего к xVal числа в списке list;
             // i, firs, last - индексы в списке list;
-            if (list.Count == 1 || xVal < list[0])
-                return (0, xVal - list[0]);
 
             int last = list.Count - 1;
             int first = 0;
-            int i = xVal * last / (list[last] - list[first]);
+
+            if (xVal <= list[first])
+                return (first, list[first] - xVal);
+
+            if (xVal >= list[last])
+                return (last, xVal - list[last]);
 
             while (last - first > 1)
             {
-                if (xVal > list[i]) first = i;
-                else last = i;
-                i = first + (last - first) * (xVal - list[first]) / (list[last] - list[first]);
+                int i = first + 1 + (last - first - 2) * (xVal - list[first]) / (list[last] - list[first]);
+                
+                if (xVal > list[i]) 
+                    first = i;
+                else 
+                    last = i;  
             }
 
             int df = xVal - list[first];
@@ -274,21 +284,21 @@ namespace исследование
 
     internal class Coordinates
     {
-        public List<int> imgX;
-        public List<int> imgY;
+        public List<int> X;
+        public List<int> Y;
         public int length = 0;
         public HashSet<int> uniqY = new HashSet<int> { };
         public Coordinates()
         {
         }
 
-        public void getCoords()
+        public void GetCoordsFromFile()
         {
-            byte[] imgBytes = readFile();
-            setupPoints(imgBytes);   // записывает точки из картинки в chart1.Series["raw"].Points
+            byte[] imgBytes = ReadFile();
+            SetupCoodrds(imgBytes);
         }
 
-        private byte[] readFile()
+        private byte[] ReadFile()
         {
             var fileDialog = new OpenFileDialog();
             if (fileDialog.ShowDialog() != DialogResult.OK)
@@ -306,11 +316,11 @@ namespace исследование
             return imgBytes;
         }
 
-        private void setupPoints(byte[] imgBytes)
+        private void SetupCoodrds(byte[] imgBytes)
         {
             uniqY.Clear();
-            imgX = new List<int>();
-            imgY = new List<int>();
+            X = new List<int>();
+            Y = new List<int>();
 
             int width = BitConverter.ToInt32(imgBytes, 18);
             int height = BitConverter.ToInt32(imgBytes, 22);
@@ -325,8 +335,8 @@ namespace исследование
                     int mask = 128 >> bitInd;
                     if ((imgByte & mask) == 0)
                     {
-                        imgX.Add(x);
-                        imgY.Add(y);
+                        X.Add(x);
+                        Y.Add(y);
                         uniqY.Add(y);
                     }
                     bitInd++;
@@ -339,7 +349,7 @@ namespace исследование
                 bitInd = 0;
                 byteInd += padding;
             }
-            length = imgX.Count;
+            length = X.Count;
         }
     }
 }

@@ -43,8 +43,8 @@ namespace исследование
             checkBox3.Checked = false;
             try
             {
-                coords.getCoords();
-                chart1.Series["raw"].Points.DataBindXY(coords.imgX, coords.imgY);
+                coords.GetCoordsFromFile();
+                chart1.Series["raw"].Points.DataBindXY(coords.X, coords.Y);
                 sorting = new Sorting(coords);
                 textBox1.Text = "Идёт сортировка...";
                 ThreadStart threadStart = new ThreadStart(sorting.sortTypes[listBox1.SelectedIndex]);
@@ -96,7 +96,7 @@ namespace исследование
                 textBox1.Text = $"Выполнение, осталось отсортировать точек: {sorting.unsortedCount}";
             else
             { 
-                textBox1.Text = $"Точек: {coords.length} \r\n Итоговый путь: {sorting.getDistance()}";
+                textBox1.Text = $"Точек: {coords.length} \r\n Итоговый путь: {sorting.GetDistance()}";
                 ost_sort.Stop();
             }
         }
