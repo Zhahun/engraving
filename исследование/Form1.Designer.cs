@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.label12 = new System.Windows.Forms.Label();
             this.buttonOpen = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -51,6 +51,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.saveDiskLabel = new System.Windows.Forms.Label();
+            this.drivesComboBox = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -140,7 +142,7 @@
             // labelSpeed
             // 
             this.labelSpeed.AutoSize = true;
-            this.labelSpeed.Location = new System.Drawing.Point(274, 23);
+            this.labelSpeed.Location = new System.Drawing.Point(264, 25);
             this.labelSpeed.Name = "labelSpeed";
             this.labelSpeed.Size = new System.Drawing.Size(49, 13);
             this.labelSpeed.TabIndex = 237;
@@ -149,8 +151,9 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
+            this.checkBox3.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox3.Cursor = System.Windows.Forms.Cursors.Default;
-            this.checkBox3.Location = new System.Drawing.Point(11, 23);
+            this.checkBox3.Location = new System.Drawing.Point(14, 24);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(147, 17);
             this.checkBox3.TabIndex = 236;
@@ -166,30 +169,30 @@
             this.chart1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.chart1.BorderlineColor = System.Drawing.SystemColors.ButtonFace;
             this.chart1.BorderlineWidth = 0;
-            chartArea4.AxisX.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
-            chartArea4.AxisY.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
-            chartArea4.Name = "engraving";
-            this.chart1.ChartAreas.Add(chartArea4);
+            chartArea1.AxisX.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            chartArea1.AxisY.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            chartArea1.Name = "engraving";
+            this.chart1.ChartAreas.Add(chartArea1);
             this.chart1.Location = new System.Drawing.Point(375, 9);
             this.chart1.Margin = new System.Windows.Forms.Padding(0);
             this.chart1.MaximumSize = new System.Drawing.Size(2048, 1080);
             this.chart1.MinimumSize = new System.Drawing.Size(360, 360);
             this.chart1.Name = "chart1";
-            series7.ChartArea = "engraving";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
-            series7.LabelForeColor = System.Drawing.Color.Blue;
-            series7.MarkerSize = 1;
-            series7.Name = "raw";
-            series7.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series7.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series8.ChartArea = "engraving";
-            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
-            series8.LabelForeColor = System.Drawing.Color.Red;
-            series8.Name = "engraved";
-            series8.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series8.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            this.chart1.Series.Add(series7);
-            this.chart1.Series.Add(series8);
+            series1.ChartArea = "engraving";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
+            series1.LabelForeColor = System.Drawing.Color.Blue;
+            series1.MarkerSize = 1;
+            series1.Name = "raw";
+            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series2.ChartArea = "engraving";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
+            series2.LabelForeColor = System.Drawing.Color.Red;
+            series2.Name = "engraved";
+            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
+            this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(802, 543);
             this.chart1.SuppressExceptions = true;
             this.chart1.TabIndex = 5;
@@ -215,38 +218,38 @@
             // 
             // label13
             // 
-            this.label13.Location = new System.Drawing.Point(14, 193);
+            this.label13.Location = new System.Drawing.Point(17, 198);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(195, 29);
+            this.label13.Size = new System.Drawing.Size(82, 29);
             this.label13.TabIndex = 243;
-            this.label13.Text = "Коэффициент преобразования по Y: ";
+            this.label13.Text = "Множитель Y: ";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // textBoxKY
             // 
-            this.textBoxKY.Location = new System.Drawing.Point(241, 198);
+            this.textBoxKY.Location = new System.Drawing.Point(101, 203);
             this.textBoxKY.MaxLength = 5;
             this.textBoxKY.Name = "textBoxKY";
-            this.textBoxKY.Size = new System.Drawing.Size(75, 20);
+            this.textBoxKY.Size = new System.Drawing.Size(44, 20);
             this.textBoxKY.TabIndex = 242;
             this.textBoxKY.Text = "160";
             this.textBoxKY.TextChanged += new System.EventHandler(this.textBoxKY_TextChanged);
             // 
             // label11
             // 
-            this.label11.Location = new System.Drawing.Point(10, 172);
+            this.label11.Location = new System.Drawing.Point(14, 177);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(203, 25);
+            this.label11.Size = new System.Drawing.Size(85, 25);
             this.label11.TabIndex = 241;
-            this.label11.Text = "Коэффициент преобразования по X:";
+            this.label11.Text = "Множитель X:";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // textBoxKX
             // 
-            this.textBoxKX.Location = new System.Drawing.Point(241, 172);
+            this.textBoxKX.Location = new System.Drawing.Point(101, 180);
             this.textBoxKX.MaxLength = 5;
             this.textBoxKX.Name = "textBoxKX";
-            this.textBoxKX.Size = new System.Drawing.Size(75, 20);
+            this.textBoxKX.Size = new System.Drawing.Size(44, 20);
             this.textBoxKX.TabIndex = 240;
             this.textBoxKX.Tag = "";
             this.textBoxKX.Text = "160";
@@ -277,6 +280,8 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox2.Controls.Add(this.saveDiskLabel);
+            this.groupBox2.Controls.Add(this.drivesComboBox);
             this.groupBox2.Controls.Add(this.label13);
             this.groupBox2.Controls.Add(this.groupBox1);
             this.groupBox2.Controls.Add(this.textBoxKY);
@@ -289,6 +294,28 @@
             this.groupBox2.Size = new System.Drawing.Size(356, 565);
             this.groupBox2.TabIndex = 246;
             this.groupBox2.TabStop = false;
+            // 
+            // saveDiskLabel
+            // 
+            this.saveDiskLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.saveDiskLabel.Location = new System.Drawing.Point(177, 177);
+            this.saveDiskLabel.Name = "saveDiskLabel";
+            this.saveDiskLabel.Size = new System.Drawing.Size(173, 22);
+            this.saveDiskLabel.TabIndex = 247;
+            this.saveDiskLabel.Text = "Выберите куда сохранить";
+            this.saveDiskLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // drivesComboBox
+            // 
+            this.drivesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.drivesComboBox.FormattingEnabled = true;
+            this.drivesComboBox.Items.AddRange(new object[] {
+            "Диск не выбран"});
+            this.drivesComboBox.Location = new System.Drawing.Point(177, 202);
+            this.drivesComboBox.Name = "drivesComboBox";
+            this.drivesComboBox.Size = new System.Drawing.Size(172, 21);
+            this.drivesComboBox.TabIndex = 246;
+            this.drivesComboBox.DropDown += new System.EventHandler(this.drivesComboBox_DropDown);
             // 
             // Form1
             // 
@@ -336,6 +363,8 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonSort;
+        private System.Windows.Forms.Label saveDiskLabel;
+        private System.Windows.Forms.ComboBox drivesComboBox;
     }
 }
 
