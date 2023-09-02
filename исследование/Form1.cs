@@ -6,15 +6,17 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace исследование
 {
     public partial class Form1 : Form
     {
-        Coordinates coords = new Coordinates();
+        Coordinates coords = null;
         Sorting sorting = null;
         Thread sortingThread = null;
+        byte[] imgBytes;
         int k_pr_x, k_pr_y;
         private int ris_tik;
         int pointPerTik = 5;
@@ -25,37 +27,73 @@ namespace исследование
             this.MouseWheel += new MouseEventHandler(this_MouseWheel);
             ris.Interval = 50;
             ost_sort.Interval=100;
-            k_pr_x = Convert.ToInt32(textBox11.Text);
-            k_pr_y = Convert.ToInt32(textBox12.Text);
-            label23.Text = pointPerTik.ToString();
+            textBox1.Text = "Откройте файл ...";
+            k_pr_x = Convert.ToInt32(textBoxKX.Text);
+            k_pr_y = Convert.ToInt32(textBoxKY.Text);
+            labelSpeed.Text = pointPerTik.ToString();
             listBox1.SelectedIndex = 0;
         }
 
-        private void button10_Click(object sender, EventArgs e)
+        private void buttonOpen_Click(object sender, EventArgs e)
         {
-            if (sortingThread != null)
-                sortingThread.Abort();
-
+            sortingThread?.Abort();
             ris.Stop();
-            chart1.Series["raw"].Points.Clear();
             chart1.Series["engraved"].Points.Clear();
-            textBox1.Clear();
             checkBox3.Checked = false;
+            sorting = null;
             try
             {
+                coords = new Coordinates();
                 coords.GetCoordsFromFile();
                 chart1.Series["raw"].Points.DataBindXY(coords.X, coords.Y);
-                sorting = new Sorting(coords);
-                textBox1.Text = "Идёт сортировка...";
-                ThreadStart threadStart = new ThreadStart(sorting.sortTypes[listBox1.SelectedIndex]);
-                sortingThread = new Thread(threadStart);
-                sortingThread.Start();
-                ost_sort.Start();
+                textBox1.Text = $"Файл: {coords.filename}\r\nРазмер {coords.width} на {coords.height}\r\nКоличество точек: {coords.length}";
             }
             catch (Exception ex)
             {
-                sorting = null;
+                coords = null;
                 textBox1.Text = ex.Message;
+            }
+        }
+        private void buttonSort_Click(object sender, EventArgs e)
+        {
+            if (coords == null)
+            {
+                textBox1.Text = "Выберите файл...";
+                return;
+            }
+
+            sortingThread?.Abort();
+            chart1.Series["engraved"].Points.Clear();
+            checkBox3.Checked = false;
+
+            sorting = new Sorting(coords);
+            ThreadStart threadStart = new ThreadStart(sorting.sortTypes[listBox1.SelectedIndex]);
+            sortingThread = new Thread(threadStart);
+            sortingThread.Start();
+            ost_sort.Start();
+        }
+
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            if (sorting == null)
+            {
+                textBox1.Text = "Проведите сортировку...";
+                return;
+            }
+
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.FileName = coords.filename;
+
+            saveFileDialog1.Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*";
+            saveFileDialog1.FilterIndex = 1; // Выберите начальный фильтр
+            
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = saveFileDialog1.FileName;
+                string dataToSave = "Пример текста для сохранения в файле.";
+                File.WriteAllText(filePath, dataToSave);
+                MessageBox.Show("Файл успешно сохранен!");
             }
         }
 
@@ -63,15 +101,16 @@ namespace исследование
         {
             ris.Stop();
             ris_tik = 0;
-
-            if (checkBox3.Checked && sorting != null)
+            if (checkBox3.Checked)
             { 
+                if (sorting == null)
+                {
+                    textBox1.Text = "Проведите сортировку...";
+                    return;
+                }
                 chart1.Series["engraved"].Points.Clear();
                 ris.Start();
-            }
-               
-            else
-                checkBox3.Checked = false;
+            } 
         }
 
         private void ris_Tick(object sender, EventArgs e)
@@ -96,18 +135,9 @@ namespace исследование
                 textBox1.Text = $"Выполнение, осталось отсортировать точек: {sorting.unsortedCount}";
             else
             { 
-                textBox1.Text = $"Точек: {coords.length} \r\n Итоговый путь: {sorting.GetDistance()}";
+                textBox1.Text = $"Файл: {coords.filename}\r\nТочек: {coords.length}\r\nСортировка: {sorting.lastSortName}\r\nИтоговый путь: {sorting.GetDistance()}";
                 ost_sort.Stop();
             }
-        }
-
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ris.Stop();
-            chart1.Series["raw"].Points.Clear();
-            chart1.Series["engraved"].Points.Clear();
-            sorting = null;
         }
 
         private void this_MouseWheel(object sender, MouseEventArgs e)
@@ -116,17 +146,17 @@ namespace исследование
                                         : (pointPerTik * 9 / 10);
             if (pointPerTik < 1)
                 pointPerTik = 1;
-            label23.Text = pointPerTik.ToString();
+            labelSpeed.Text = pointPerTik.ToString();
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void textBoxKX_TextChanged(object sender, EventArgs e)
         {
-
+            int.TryParse(textBoxKX.Text, out k_pr_x);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void textBoxKY_TextChanged(object sender, EventArgs e)
         {
-
+            int.TryParse(textBoxKY.Text, out k_pr_y);
         }
     }
 }

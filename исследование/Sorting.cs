@@ -17,6 +17,7 @@ namespace исследование
         public int[] sortedX;
         public int[] sortedY;
         public int unsortedCount;
+        public string lastSortName = "";
 
         public Sorting(Coordinates coords)
         {
@@ -56,18 +57,21 @@ namespace исследование
         {
             sortedX = coords.X.ToArray();
             sortedY = coords.Y.ToArray();
+            lastSortName = "без сортировки";
         }
 
         public void BFSort()
         {
             BruteForceSort sort = new BruteForceSort(coords);
-            sort.Sort(ref sortedX, ref sortedY, ref unsortedCount);
+            sort.Sort(sortedX, sortedY, ref unsortedCount);
+            lastSortName = "перебор";
         }
 
         public void IntSort()
         { 
             InterpolationSort sort = new InterpolationSort(coords);
-            sort.Sort(ref sortedX, ref sortedY, ref unsortedCount);
+            sort.Sort(sortedX, sortedY, ref unsortedCount);
+            lastSortName = "бинарный поиск с приближением";
         }
 
         public void Sort3() { }
@@ -92,7 +96,7 @@ namespace исследование
                 coordsSet.Add((coords.X[i], coords.Y[i]));
         }
 
-        public void Sort(ref int[] sortedX, ref int[] sortedY, ref int unsortedCount)
+        public void Sort(int[] sortedX, int[] sortedY, ref int unsortedCount)
         {
             (int, int) point = (0, 0);
             for (int i = 0; i < length; i++)
@@ -158,7 +162,7 @@ namespace исследование
             yVal = colY[0];
         }
 
-        public void Sort(ref int[] sortedX, ref int[] sortedY, ref int unsortedCount)
+        public void Sort(int[] sortedX, int[] sortedY, ref int unsortedCount)
         {
             unsortedCount = length;
             for (int i = 0; i < length; i++)
@@ -286,8 +290,11 @@ namespace исследование
     {
         public List<int> X;
         public List<int> Y;
+        public int width = 0;
+        public int height = 0;
         public int length = 0;
         public HashSet<int> uniqY = new HashSet<int> { };
+        public string filename;
         public Coordinates()
         {
         }
@@ -308,11 +315,11 @@ namespace исследование
                 fileDialog.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             byte[] imgBytes = reader.ReadBytes((int)reader.BaseStream.Length);
             reader.Close();
+            filename = Path.GetFileName(fileDialog.FileName);
             fileDialog.Dispose();
 
             if (imgBytes[0] != 0x42 || imgBytes[1] != 0x4D)
                 throw new Exception("Файл не являяется mono bmp");
-
             return imgBytes;
         }
 
@@ -322,8 +329,8 @@ namespace исследование
             X = new List<int>();
             Y = new List<int>();
 
-            int width = BitConverter.ToInt32(imgBytes, 18);
-            int height = BitConverter.ToInt32(imgBytes, 22);
+            width = BitConverter.ToInt32(imgBytes, 18);
+            height = BitConverter.ToInt32(imgBytes, 22);
             int padding = (4 - width % 32 / 8) % 4; //дополнение байт до 4
             int byteInd = 62;
             int bitInd = 0;
