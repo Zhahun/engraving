@@ -88,8 +88,8 @@ namespace исследование
 
             try
             {
-                SDCardSaver saver = new SDCardSaver(sorting.sortedX, sorting.sortedY, Kx, Ky);
-                if (saver.Save(drivesComboBox.Text))
+                SDFileManager saver = new SDFileManager(sorting.sortedX, sorting.sortedY, Kx, Ky);
+                if (saver.Write(drivesComboBox.Text))
                     textBox1.Text = "Файл сохранён";
                 else
                     textBox1.Text = "Не удалось сохранить файл";
@@ -193,6 +193,7 @@ namespace исследование
             int.TryParse(textBoxKY.Text, out Ky);
         }
 
+
         private void drivesComboBox_DropDown(object sender, EventArgs e)
         {
             var removable = DriveInfo.GetDrives().Where(drive => drive.DriveType == DriveType.Removable);
@@ -209,12 +210,17 @@ namespace исследование
         }
     }
 
-    class SDCardSaver
+    class SDFileManager
     {
         private readonly byte[] buffer;
-        public SDCardSaver(int[] X, int[] Y, int Kx, int Ky)
+        public SDFileManager(int[] X, int[] Y, int Kx, int Ky)
         {
             List<byte> byteList = new List<byte>();
+
+            int secEnd = 16479 + X.Length / 64; // Результирующее число байт / 512
+            byteList.AddRange(BitConverter.GetBytes(secEnd));
+            byteList.AddRange(BitConverter.GetBytes(0));
+
             for (int i = 0; i < X.Length; i++)
             {
                 byteList.AddRange(BitConverter.GetBytes(X[i] * Kx));
@@ -223,9 +229,9 @@ namespace исследование
             buffer = byteList.ToArray();
         }
 
-        public bool Save(string driveName)
+        public bool Write(string driveName)
         {
-            SafeFileHandle hFile = CreateFile
+            SafeFileHandle fileHandle = CreateFile
             (
                 @"\\.\" + driveName,
                 FileAccess.Write,
@@ -235,14 +241,15 @@ namespace исследование
                 FileAttributes.Normal,
                 IntPtr.Zero
             );
-            using (hFile)
+            
+            using (fileHandle)
             {
-                if (!hFile.IsInvalid)
-                {
-                    return WriteFile(hFile, buffer, (uint)buffer.Length, out uint bytesWritten, IntPtr.Zero);
-                }
+                if (fileHandle.IsInvalid)
+                    return false;
+
+                return WriteFile(fileHandle, buffer, (uint)buffer.Length, out uint bytesWritten, IntPtr.Zero);
             }
-            return false;
+            
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]

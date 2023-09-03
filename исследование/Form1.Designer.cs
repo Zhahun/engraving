@@ -32,6 +32,7 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label12 = new System.Windows.Forms.Label();
             this.buttonOpen = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -92,9 +93,9 @@
             this.panel1.Controls.Add(this.listBox1);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.buttonOpen);
-            this.panel1.Location = new System.Drawing.Point(6, 14);
+            this.panel1.Location = new System.Drawing.Point(6, 13);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(344, 152);
+            this.panel1.Size = new System.Drawing.Size(344, 153);
             this.panel1.TabIndex = 224;
             // 
             // buttonSave
@@ -167,8 +168,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chart1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chart1.BorderlineColor = System.Drawing.SystemColors.ButtonFace;
-            this.chart1.BorderlineWidth = 0;
+            this.chart1.BorderlineColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.chart1.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
             chartArea1.AxisX.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
             chartArea1.AxisY.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
             chartArea1.Name = "engraving";
@@ -206,10 +207,11 @@
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox1.Location = new System.Drawing.Point(6, 286);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(344, 268);
+            this.textBox1.Size = new System.Drawing.Size(344, 270);
             this.textBox1.TabIndex = 239;
             // 
             // ost_sort
@@ -289,9 +291,10 @@
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.textBoxKX);
             this.groupBox2.Controls.Add(this.panel1);
-            this.groupBox2.Location = new System.Drawing.Point(5, -2);
+            this.groupBox2.Location = new System.Drawing.Point(5, -4);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(356, 565);
+            this.groupBox2.Size = new System.Drawing.Size(356, 564);
             this.groupBox2.TabIndex = 246;
             this.groupBox2.TabStop = false;
             // 
@@ -326,11 +329,12 @@
             this.ClientSize = new System.Drawing.Size(1184, 561);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.chart1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(2048, 1080);
             this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Исследование";
+            this.Text = "Выжигатель 3000";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
