@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
+
 namespace исследование
 {
     internal class Sorting
@@ -46,7 +47,8 @@ namespace исследование
             {
                 int x1 = sortedX[i];
                 int y1 = sortedY[i];
-                distance += Math.Sqrt(Math.Pow(x1 - x, 2) + Math.Pow(y1 - y, 2));
+                distance += Math.Max(Math.Abs(x - x1), Math.Abs(y - y1));
+                //distance += Math.Sqrt(Math.Pow(x1 - x, 2) + Math.Pow(y1 - y, 2));
                 x = x1;
                 y = y1;
             }
@@ -144,6 +146,10 @@ namespace исследование
         private readonly int length;
         private List<int> colY;
         private Dictionary<int, List<int>> YAxisToXValues;
+        private bool priorityOX = true;
+        private bool priorityUp = true;
+        private bool priorityLeft = true;
+
 
         public InterpolationSort(Coordinates coords)
         {
@@ -168,9 +174,12 @@ namespace исследование
             for (int i = 0; i < length; i++)
             {
                 (indX, indY) = GetNearestCoord();
-                yVal = colY[indY];
-                List<int> rowX = YAxisToXValues[yVal];
-                xVal = rowX[indX];
+                int y = colY[indY];
+                List<int> rowX = YAxisToXValues[y];
+                int x = rowX[indX];
+                SetPriority(x, y);
+                xVal = x;
+                yVal = y;
                 sortedX[i] = xVal;
                 sortedY[i] = yVal;
                 rowX.RemoveAt(indX);
@@ -180,6 +189,17 @@ namespace исследование
                     YAxisToXValues.Remove(yVal);
                 }
                 unsortedCount--;
+            }
+        }
+        private void SetPriority(int x, int y)
+        {
+            priorityLeft = (y - yVal > 0) ? true : false;
+            if (x == xVal)
+                priorityOX = true;
+            else
+            {
+                priorityOX = false;
+                priorityUp = (x - xVal > 0) ? true : false;
             }
         }
 
@@ -198,16 +218,24 @@ namespace исследование
 
                 int distance = dx * dx + dy * dy;
                 
-                if (distance < minDistance)
+                if (distance <= minDistance)
                 {
                     minY = indY1;
                     minX = indX1;
                     minDistance = distance;
                 }
 
-                if (Math.Abs(dx) < 2 || minDistance < dy * dy)
-                    break;
-            }
+                if (dy == 0) 
+                { 
+                    if (priorityOX) // Приоритет оси X
+                    { 
+                        if (dx == -1 & priorityLeft) break;
+                        if (dx == 1 & !priorityLeft) break;
+                    }
+                }  
+                else if(Math.Abs(dx) < 2) break;
+                if (minDistance < dy * dy) break;
+            }      
             return (minX, minY);
         }
 
@@ -225,7 +253,20 @@ namespace исследование
                 {
                     dyUp = colY[up] - yVal;
                     dyDown = yVal - colY[down];
-                    if (dyDown < dyUp)
+                    if (dyDown == dyUp)
+                    {
+                        if (priorityUp)
+                        {
+                            yield return (up, dyUp);
+                            up++;
+                        }
+                        else
+                        {
+                            yield return (down, dyDown);
+                            down--;
+                        }
+                    }
+                    else if (dyDown < dyUp)
                     {
                         yield return (down, dyDown);
                         down--;
@@ -255,34 +296,42 @@ namespace исследование
         private (int, int) BinarySearch(List<int> list)
         {
             // Поиск индекса ближайшего к xVal числа в списке list;
-            // i, firs, last - индексы в списке list;
+            // i, firs, right - индексы в списке list;
 
-            int last = list.Count - 1;
-            int first = 0;
+            int right = list.Count - 1;
+            int left = 0;
 
-            if (xVal <= list[first])
-                return (first, list[first] - xVal);
+            if (xVal <= list[left])
+                return (left, list[left] - xVal);
 
-            if (xVal >= list[last])
-                return (last, xVal - list[last]);
+            if (xVal >= list[right])
+                return (right,list[right] -  xVal);
 
-            while (last - first > 1)
+            while (right - left > 1)
             {
-                int i = first + 1 + (last - first - 2) * (xVal - list[first]) / (list[last] - list[first]);
+                int i = left + 1 + (right - left - 2) * (xVal - list[left]) / (list[right] - list[left]);
                 
                 if (xVal > list[i]) 
-                    first = i;
+                    left = i;
                 else 
-                    last = i;  
+                    right = i;  
             }
 
-            int df = xVal - list[first];
-            int dl = list[last] - xVal;
+            int dl = list[left] - xVal;
+            int dr = list[right] - xVal;
 
-            if (df < dl)
-                return (first, df);
+            if (-dl == dr)
+            { 
+                if (priorityLeft)
+                    return (left, dl);
+                else
+                    return (right, dr);
+            }
+                 
+            if (-dl < dr)
+                return (left, dl);
             else
-                return (last, dl);
+                return (right, dr);
         }
     }
 
@@ -301,11 +350,11 @@ namespace исследование
 
         public void GetCoordsFromFile()
         {
-            byte[] imgBytes = ReadFile();
+            byte[] imgBytes = Readlile();
             SetupCoodrds(imgBytes);
         }
 
-        private byte[] ReadFile()
+        private byte[] Readlile()
         {
             var fileDialog = new OpenFileDialog();
             if (fileDialog.ShowDialog() != DialogResult.OK)
