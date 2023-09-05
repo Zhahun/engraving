@@ -162,8 +162,7 @@ namespace исследование
                 textBox1.Text = $"Выполнение, осталось отсортировать точек: {sorting.unsortedCount}";
             else
             {
-                textBox1.Text = 
-                (   
+                textBox1.Text = (   
                     "Сортировка завершена\r\n" +
                     $"Файл: {coords.filename}\r\n" +
                     $"Сортировка: {sorting.lastSortName}\r\n" +
@@ -220,19 +219,20 @@ namespace исследование
             int secEnd = 16479 + X.Length / 64; // Результирующее число байт / 512
             byteList.AddRange(BitConverter.GetBytes(secEnd));
             byteList.AddRange(BitConverter.GetBytes(0));
-
             for (int i = 0; i < X.Length; i++)
             {
                 byteList.AddRange(BitConverter.GetBytes(X[i] * Kx));
                 byteList.AddRange(BitConverter.GetBytes(Y[i] * Ky));
             }
+            int padding = (512 - byteList.Count % 512) % 512; 
+            byte[] zeroes = new byte[padding];
+            byteList.AddRange(zeroes);
             buffer = byteList.ToArray();
         }
 
         public bool Write(string driveName)
         {
-            SafeFileHandle fileHandle = CreateFile
-            (
+            SafeFileHandle fileHandle = CreateFile(
                 @"\\.\" + driveName,
                 FileAccess.Write,
                 FileShare.None,
@@ -247,7 +247,13 @@ namespace исследование
                 if (fileHandle.IsInvalid)
                     return false;
 
-                return WriteFile(fileHandle, buffer, (uint)buffer.Length, out uint bytesWritten, IntPtr.Zero);
+                return WriteFile(
+                    fileHandle,
+                    buffer,
+                    (uint) buffer.Length,
+                    out uint bytesWritten, 
+                    IntPtr.Zero
+                );
             }
             
         }

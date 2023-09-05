@@ -193,6 +193,11 @@ namespace исследование
         }
         private void SetPriority(int x, int y)
         {
+            if (y - yVal < 0)
+            {
+                priorityLeft = true;
+                 priorityOX = false;
+            }
             priorityLeft = (y - yVal > 0) ? true : false;
             if (x == xVal)
                 priorityOX = true;
