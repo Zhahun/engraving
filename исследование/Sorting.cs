@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
+using RBush;
 
 
 namespace исследование
@@ -70,7 +67,7 @@ namespace исследование
         }
 
         public void IntSort()
-        { 
+        {
             InterpolationSort sort = new InterpolationSort(coords);
             sort.Sort(sortedX, sortedY, ref unsortedCount);
             lastSortName = "бинарный поиск с приближением";
@@ -80,6 +77,35 @@ namespace исследование
         public void Sort4() { }
         public void Sort5() { }
         public void Sort6() { }
+    }
+    internal class RTreeSort
+    {
+        private RBush<Point> tree;
+        class Point : ISpatialData
+        {
+            public Point(Envelope envelope) =>
+              _envelope = envelope;
+            private readonly Envelope _envelope;
+            public ref readonly Envelope Envelope => ref _envelope;
+        }
+
+        public RTreeSort(Coordinates coords)
+        {
+            var tree = new RBush<Point>();
+            var points = new List<Point>();
+            
+            for (int i = 0; i < coords.length; i++)
+            {
+                var point = new Point(
+                    new Envelope(
+                        MinX: coords.X[i],
+                        MinY: coords.Y[i],
+                        MaxX: coords.X[i],
+                        MaxY: coords.Y[i]));
+                points.Add(point);
+            }
+            tree.BulkLoad(points);
+        }
     }
 
     internal class BruteForceSort
@@ -385,7 +411,7 @@ namespace исследование
 
             width = BitConverter.ToInt32(imgBytes, 18);
             height = BitConverter.ToInt32(imgBytes, 22);
-            int padding = (4 - width % 32 / 8) % 4; //дополнение байт до 4
+            int padding = (imgBytes.Length - 62) / height - width / 8;
             int byteInd = 62;
             int bitInd = 0;
             for (int y = 0; y < height; y++)
