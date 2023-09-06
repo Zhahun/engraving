@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using RBush;
 
 
 namespace исследование
@@ -77,35 +76,6 @@ namespace исследование
         public void Sort4() { }
         public void Sort5() { }
         public void Sort6() { }
-    }
-    internal class RTreeSort
-    {
-        private RBush<Point> tree;
-        class Point : ISpatialData
-        {
-            public Point(Envelope envelope) =>
-              _envelope = envelope;
-            private readonly Envelope _envelope;
-            public ref readonly Envelope Envelope => ref _envelope;
-        }
-
-        public RTreeSort(Coordinates coords)
-        {
-            var tree = new RBush<Point>();
-            var points = new List<Point>();
-            
-            for (int i = 0; i < coords.length; i++)
-            {
-                var point = new Point(
-                    new Envelope(
-                        MinX: coords.X[i],
-                        MinY: coords.Y[i],
-                        MaxX: coords.X[i],
-                        MaxY: coords.Y[i]));
-                points.Add(point);
-            }
-            tree.BulkLoad(points);
-        }
     }
 
     internal class BruteForceSort
