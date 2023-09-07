@@ -39,13 +39,13 @@ namespace исследование
             ris.Stop();
             chart1.Series["engraved"].Points.Clear();
             checkBox3.Checked = false;
-            sorting = null;
             try
             {
                 coords = new Coordinates();
                 coords.GetCoordsFromFile();
+                sorting = null;
                 chart1.Series["raw"].Points.DataBindXY(coords.X, coords.Y);
-                textBox1.Text = $"Файл: {coords.filename}\r\nРазмер {coords.width} на {coords.height}\r\nКоличество точек: {coords.length}";
+                textBox1.Text = coords.GetFileInfo();
             }
             catch (Exception ex)
             {
@@ -163,11 +163,10 @@ namespace исследование
             else
             {
                 textBox1.Text = (   
-                    "Сортировка завершена\r\n" +
-                    $"Файл: {coords.filename}\r\n" +
+                    coords.GetFileInfo() +
+                    "Сортировка завершена!\r\n" +
                     $"Сортировка: {sorting.lastSortName}\r\n" +
-                    $"Точек: {coords.length}\r\n" +
-                    $"Итоговый путь: {sorting.GetDistance()}"
+                    $"Приблизительное время прожига: {sorting.GetTime()}\r\n"
                 );
                 ost_sort.Stop();
             }

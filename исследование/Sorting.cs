@@ -33,22 +33,24 @@ namespace исследование
             sortedY = new int[coords.X.Count];
         }
 
-        public long GetDistance()
+        public TimeSpan GetTime()
         {
             int x = sortedX[0];
             int y = sortedY[0];
-            double distance = 0;
-
+            long ms = 0;
             for (int i = 0; i < sortedX.Length; i++)
             {
                 int x1 = sortedX[i];
                 int y1 = sortedY[i];
-                distance += Math.Max(Math.Abs(x - x1), Math.Abs(y - y1));
                 //distance += Math.Sqrt(Math.Pow(x1 - x, 2) + Math.Pow(y1 - y, 2));
+                int distance = Math.Max(Math.Abs(x - x1), Math.Abs(y - y1));
+                ms += distance * 48 + 10;
                 x = x1;
                 y = y1;
             }
-            return (long)distance;
+            int seconds = (int) ms / 1000;
+            TimeSpan time = new TimeSpan(0, 0, seconds);
+            return time;
         }
 
         public void NonSort()
@@ -142,10 +144,7 @@ namespace исследование
         private readonly int length;
         private List<int> colY;
         private Dictionary<int, List<int>> YAxisToXValues;
-        private bool priorityOX = true;
-        private bool priorityUp = true;
-        private bool priorityLeft = true;
-
+        private bool reverse = true;
 
         public InterpolationSort(Coordinates coords)
         {
@@ -163,6 +162,12 @@ namespace исследование
             indY = 0;
             yVal = colY[0];
         }
+        private enum Diraction:{
+            left,
+            right,
+            up,
+            down,
+        }
 
         public void Sort(int[] sortedX, int[] sortedY, ref int unsortedCount)
         {
@@ -173,7 +178,10 @@ namespace исследование
                 int y = colY[indY];
                 List<int> rowX = YAxisToXValues[y];
                 int x = rowX[indX];
-                SetPriority(x, y);
+                if (y - yVal > 0)
+                    reverse = true;
+                else if (x - xVal != 0 | y - yVal < 0 )
+                    reverse = false;
                 xVal = x;
                 yVal = y;
                 sortedX[i] = xVal;
@@ -185,22 +193,6 @@ namespace исследование
                     YAxisToXValues.Remove(yVal);
                 }
                 unsortedCount--;
-            }
-        }
-        private void SetPriority(int x, int y)
-        {
-            if (y - yVal < 0)
-            {
-                priorityLeft = true;
-                 priorityOX = false;
-            }
-            priorityLeft = (y - yVal > 0) ? true : false;
-            if (x == xVal)
-                priorityOX = true;
-            else
-            {
-                priorityOX = false;
-                priorityUp = (x - xVal > 0) ? true : false;
             }
         }
 
@@ -226,16 +218,19 @@ namespace исследование
                     minDistance = distance;
                 }
 
-                if (dy == 0) 
-                { 
-                    if (priorityOX) // Приоритет оси X
-                    { 
-                        if (dx == -1 & priorityLeft) break;
-                        if (dx == 1 & !priorityLeft) break;
-                    }
-                }  
-                else if(Math.Abs(dx) < 2) break;
                 if (minDistance < dy * dy) break;
+
+                if (dy == 0 & dx == -1) break;
+
+                if (reverse)
+                {
+                    if (dy == 1 & dx == 0) break;
+                }
+                else
+                {
+                    if (dy == -1 & dx == 0) break;
+                }
+   
             }      
             return (minX, minY);
         }
@@ -253,21 +248,9 @@ namespace исследование
                 if (down >= 0 & up < colY.Count)
                 {
                     dyUp = colY[up] - yVal;
-                    dyDown = yVal - colY[down];
-                    if (dyDown == dyUp)
-                    {
-                        if (priorityUp)
-                        {
-                            yield return (up, dyUp);
-                            up++;
-                        }
-                        else
-                        {
-                            yield return (down, dyDown);
-                            down--;
-                        }
-                    }
-                    else if (dyDown < dyUp)
+                    dyDown = colY[down] - yVal;
+
+                    if (- dyDown < dyUp)
                     {
                         yield return (down, dyDown);
                         down--;
@@ -280,7 +263,7 @@ namespace исследование
                 }
                 else if (down >= 0)
                 {
-                    dyDown = yVal - colY[down];
+                    dyDown = colY[down] - yVal;
                     yield return (down, dyDown);
                     down--;
                 }
@@ -306,7 +289,7 @@ namespace исследование
                 return (left, list[left] - xVal);
 
             if (xVal >= list[right])
-                return (right,list[right] -  xVal);
+                return (right, list[right] -  xVal);
 
             while (right - left > 1)
             {
@@ -320,19 +303,11 @@ namespace исследование
 
             int dl = list[left] - xVal;
             int dr = list[right] - xVal;
-
-            if (-dl == dr)
-            { 
-                if (priorityLeft)
-                    return (left, dl);
-                else
-                    return (right, dr);
-            }
                  
-            if (-dl < dr)
-                return (left, dl);
-            else
+            if (dr < - dl)
                 return (right, dr);
+            else
+                return (left, dl);
         }
     }
 
@@ -407,6 +382,10 @@ namespace исследование
                 byteInd += padding;
             }
             length = X.Count;
+        }
+        public string GetFileInfo()
+        {
+             return $"Файл: {filename}\r\nРазмер {width} на {height}\r\nКоличество точек: {length}\r\n";
         }
     }
 }
