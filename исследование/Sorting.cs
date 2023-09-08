@@ -144,7 +144,7 @@ namespace исследование
         private readonly int length;
         private List<int> colY;
         private Dictionary<int, List<int>> YAxisToXValues;
-        private bool reverse = true;
+        private Direction direction = Direction.right;
 
         public InterpolationSort(Coordinates coords)
         {
@@ -162,7 +162,8 @@ namespace исследование
             indY = 0;
             yVal = colY[0];
         }
-        private enum Diraction:{
+
+        private enum Direction:{
             left,
             right,
             up,
@@ -175,15 +176,9 @@ namespace исследование
             for (int i = 0; i < length; i++)
             {
                 (indX, indY) = GetNearestCoord();
-                int y = colY[indY];
-                List<int> rowX = YAxisToXValues[y];
-                int x = rowX[indX];
-                if (y - yVal > 0)
-                    reverse = true;
-                else if (x - xVal != 0 | y - yVal < 0 )
-                    reverse = false;
-                xVal = x;
-                yVal = y;
+                yVal = colY[indY];
+                List<int> rowX = YAxisToXValues[yVal];
+                xVal = rowX[indX];
                 sortedX[i] = xVal;
                 sortedY[i] = yVal;
                 rowX.RemoveAt(indX);
@@ -219,20 +214,24 @@ namespace исследование
                 }
 
                 if (minDistance < dy * dy) break;
-
-                if (dy == 0 & dx == -1) break;
-
-                if (reverse)
-                {
-                    if (dy == 1 & dx == 0) break;
-                }
-                else
-                {
-                    if (dy == -1 & dx == 0) break;
-                }
-   
+                if (GetDirection(int dx, int dy)) break;
             }      
             return (minX, minY);
+        }
+
+        private bool GetDirection(int dx, int dy) 
+        {
+            if (direction == Direction.left) { }
+            else if (direction == Direction.right) { }
+            else if (direction == Direction.up) { 
+                if(dx == 1)
+                {
+                    direction = Direction.right;
+                    return true;
+                }
+                    
+            }
+            else if (direction == Direction.down) { }
         }
 
         private IEnumerable<(int, int)> YSearch()
