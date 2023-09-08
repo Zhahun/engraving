@@ -144,7 +144,7 @@ namespace исследование
         private readonly int length;
         private List<int> colY;
         private Dictionary<int, List<int>> YAxisToXValues;
-        private Direction direction = Direction.right;
+        private delegate bool Operation(out int indY1, out int yVal1, out int dy);
 
         public InterpolationSort(Coordinates coords)
         {
@@ -161,13 +161,6 @@ namespace исследование
             xVal = 0;
             indY = 0;
             yVal = colY[0];
-        }
-
-        private enum Direction:{
-            left,
-            right,
-            up,
-            down,
         }
 
         public void Sort(int[] sortedX, int[] sortedY, ref int unsortedCount)
@@ -197,86 +190,64 @@ namespace исследование
             // minX, minY индексы;
             int minX = 0;
             int minY = 0;
-            int minDistance = int.MaxValue;
+            long minDistance = long.MaxValue;
+            long minStartDistance = long.MaxValue;
 
-            foreach ((int indY1, int dy) in YSearch())
+            Operation fnYSearch = YSearch();
+            while (fnYSearch(out int indY1, out int yVal1, out int dy))
             {
+                if (minDistance < dy * dy) break;
                 List<int> rowX1 = YAxisToXValues[colY[indY1]];
-                (int indX1, int dx) = BinarySearch(rowX1);
+                BinarySearch(rowX1, out int indX1, out int xVal1, out int dx);
 
-                int distance = dx * dx + dy * dy;
-                
-                if (distance <= minDistance)
+                long distance = dx * dx + dy * dy;
+                long startDistance = xVal1 * xVal1 + yVal1 * yVal1;
+
+                if (distance <= minDistance & startDistance < minStartDistance)
                 {
                     minY = indY1;
                     minX = indX1;
                     minDistance = distance;
+                    minStartDistance = startDistance;
                 }
-
-                if (minDistance < dy * dy) break;
-                if (GetDirection(int dx, int dy)) break;
-            }      
+            }
             return (minX, minY);
         }
 
-        private bool GetDirection(int dx, int dy) 
+        private Operation YSearch()
         {
-            if (direction == Direction.left) { }
-            else if (direction == Direction.right) { }
-            else if (direction == Direction.up) { 
-                if(dx == 1)
-                {
-                    direction = Direction.right;
-                    return true;
-                }
-                    
-            }
-            else if (direction == Direction.down) { }
-        }
-
-        private IEnumerable<(int, int)> YSearch()
-        {
-            // Генератор, возвращающий индекы чисел в списке uniqY по возрастанию расстояния к uniqY[yIndex];
-            // yIndex, up, down - индексы 
             int up = indY;
             int down = indY - 1;
-            int dyUp, dyDown;
 
-            while (true)
+            bool Inner(out int indY1, out int yVal1, out int dy)
             {
+                indY1 = 0;
+                yVal1 = 0;
+                dy = 0;
+
                 if (down >= 0 & up < colY.Count)
                 {
-                    dyUp = colY[up] - yVal;
-                    dyDown = colY[down] - yVal;
-
-                    if (- dyDown < dyUp)
-                    {
-                        yield return (down, dyDown);
-                        down--;
-                    } 
+                    if (yVal - colY[down] < colY[up] - yVal)
+                        indY1 = down--;
                     else
-                    {
-                        yield return (up, dyUp);
-                        up++;
-                    }  
+                        indY1 = up++;
                 }
-                else if (down >= 0)
-                {
-                    dyDown = colY[down] - yVal;
-                    yield return (down, dyDown);
-                    down--;
-                }
-                else if (up < colY.Count)
-                {
-                    dyUp = colY[up] - yVal;
-                    yield return (up, dyUp);
-                    up++;
-                }
-                else break;
-            }
-        }
+                else if (down >= 0) 
+                    indY1 = down--;
+                else if (up < colY.Count) 
+                    indY1 = up++;
+                else 
+                    return false;
 
-        private (int, int) BinarySearch(List<int> list)
+                yVal1 = colY[indY1];
+                dy = yVal1 - yVal;
+                return true;
+            }
+            return Inner;
+        }
+        
+
+        private void BinarySearch(List<int> list, out int indX1, out int xVal1, out int dx)
         {
             // Поиск индекса ближайшего к xVal числа в списке list;
             // i, firs, right - индексы в списке list;
@@ -285,28 +256,28 @@ namespace исследование
             int left = 0;
 
             if (xVal <= list[left])
-                return (left, list[left] - xVal);
-
-            if (xVal >= list[right])
-                return (right, list[right] -  xVal);
-
-            while (right - left > 1)
+                indX1 = left;
+            else if (xVal >= list[right])
+                indX1 = right;
+            else
             {
-                int i = left + 1 + (right - left - 2) * (xVal - list[left]) / (list[right] - list[left]);
-                
-                if (xVal > list[i]) 
-                    left = i;
-                else 
-                    right = i;  
+                while (right - left > 1)
+                {
+                    int i = left + 1 + (right - left - 2) * (xVal - list[left]) / (list[right] - list[left]);
+                    if (xVal > list[i])
+                        left = i;
+                    else
+                        right = i;
+                }
+
+                if (list[right] - xVal < xVal - list[left])
+                    indX1 = right;
+                else
+                    indX1 = left;
             }
 
-            int dl = list[left] - xVal;
-            int dr = list[right] - xVal;
-                 
-            if (dr < - dl)
-                return (right, dr);
-            else
-                return (left, dl);
+            xVal1 = list[indX1];
+            dx = xVal1 - xVal;
         }
     }
 
