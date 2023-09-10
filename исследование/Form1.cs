@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using IO;
+using sortings;
 
 
 namespace исследование
@@ -41,8 +43,8 @@ namespace исследование
             checkBox3.Checked = false;
             try
             {
-                coords = new Coordinates();
-                coords.GetCoordsFromFile();
+                byte[] monoBMP = BMPReader.ReadFile(out string filename);
+                coords = new Coordinates(monoBMP, filename);
                 sorting = null;
                 chart1.Series["raw"].Points.DataBindXY(coords.X, coords.Y);
                 textBox1.Text = coords.GetFileInfo();
@@ -88,8 +90,10 @@ namespace исследование
 
             try
             {
-                SDFileManager saver = new SDFileManager(sorting.sortedX, sorting.sortedY, Kx, Ky);
-                if (saver.Write(drivesComboBox.Text))
+                byte[] buffer = SDFileWriter.MergeCoords(sorting.sortedX, sorting.sortedY, Kx, Ky);
+                bool isSaved = SDFileWriter.WriteToDrive(buffer, drivesComboBox.Text);
+                
+                if (isSaved)
                     textBox1.Text = "Файл сохранён";
                 else
                     textBox1.Text = "Не удалось сохранить файл";
@@ -100,30 +104,7 @@ namespace исследование
                 textBox1.Text = ex.Message;
             }
         }
-        /*
-        private void buttonSave_Click(object sender, EventArgs e)
-        {
-            if (sorting == null)
-            {
-                textBox1.Text = "Проведите сортировку...";
-                return;
-            }
 
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            saveFileDialog1.FileName = coords.filename;
-
-            saveFileDialog1.Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*";
-            saveFileDialog1.FilterIndex = 1; // Выберите начальный фильтр
-
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                string filePath = saveFileDialog1.FileName;
-                string dataToSave = "Пример текста для сохранения в файле.";
-                File.WriteAllText(filePath, dataToSave);
-                MessageBox.Show("Файл успешно сохранен!");
-            }
-        }
-        */
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             ris.Stop();
@@ -191,7 +172,6 @@ namespace исследование
             int.TryParse(textBoxKY.Text, out Ky);
         }
 
-
         private void drivesComboBox_DropDown(object sender, EventArgs e)
         {
             var removable = DriveInfo.GetDrives().Where(drive => drive.DriveType == DriveType.Removable);
@@ -206,77 +186,6 @@ namespace исследование
             else
                 drivesComboBox.Items[0] = "Диск не выбран";
         }
-    }
-
-    class SDFileManager
-    {
-        private readonly byte[] buffer;
-        public SDFileManager(int[] X, int[] Y, int Kx, int Ky)
-        {
-            List<byte> byteList = new List<byte>();
-
-            int secEnd = 16479 + X.Length / 64; // Результирующее число байт / 512
-            byteList.AddRange(BitConverter.GetBytes(secEnd));
-            byteList.AddRange(BitConverter.GetBytes(0));
-            for (int i = 0; i < X.Length; i++)
-            {
-                byteList.AddRange(BitConverter.GetBytes(X[i] * Kx));
-                byteList.AddRange(BitConverter.GetBytes(Y[i] * Ky));
-            }
-            int padding = (512 - byteList.Count % 512) % 512; 
-            byte[] zeroes = new byte[padding];
-            byteList.AddRange(zeroes);
-            buffer = byteList.ToArray();
-        }
-
-        public bool Write(string driveName)
-        {
-            SafeFileHandle fileHandle = CreateFile(
-                @"\\.\" + driveName,
-                FileAccess.Write,
-                FileShare.None,
-                IntPtr.Zero,
-                FileMode.Create,
-                FileAttributes.Normal,
-                IntPtr.Zero
-            );
-            
-            using (fileHandle)
-            {
-                if (fileHandle.IsInvalid)
-                    return false;
-
-                return WriteFile(
-                    fileHandle,
-                    buffer,
-                    (uint) buffer.Length,
-                    out uint bytesWritten, 
-                    IntPtr.Zero
-                );
-            }
-            
-        }
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool WriteFile(
-            SafeHandle hFile,
-            byte[] lpBuffer,
-            uint nNumberOfBytesToWrite,
-            out uint lpNumberOfBytesWritten,
-            IntPtr lpOverlapped
-        );
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern SafeFileHandle CreateFile(
-            string lpFileName,
-            FileAccess dwDesiredAccess,
-            FileShare dwShareMode,
-            IntPtr lpSecurityAttributes,
-            FileMode dwCreationDisposition,
-            FileAttributes dwFlagsAndAttributes,
-            IntPtr hTemplateFile
-        );
     }
 }
 
