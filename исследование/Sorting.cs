@@ -141,13 +141,19 @@ namespace исследование
         private int indY;
         private int xVal;
         private int yVal;
+        private int xSum = 0;
+        private int ySum = 0;
+        double massCenterX = 0;
+        double massCenterY = 0;
         private readonly int length;
+        private Coordinates coords;
         private List<int> colY;
         private Dictionary<int, List<int>> YAxisToXValues;
         private delegate bool Operation(out int indY1, out int yVal1, out int dy);
 
         public InterpolationSort(Coordinates coords)
         {
+            this.coords = coords;
             length = coords.length;
             colY = coords.uniqY.ToList();
             YAxisToXValues = new Dictionary<int, List<int>> { };
@@ -181,6 +187,11 @@ namespace исследование
                     YAxisToXValues.Remove(yVal);
                 }
                 unsortedCount--;
+
+                xSum += xVal;
+                ySum += xVal;
+                massCenterX = xSum / (i+1);
+                massCenterY = ySum / (i+1);
             }
         }
 
@@ -190,26 +201,31 @@ namespace исследование
             // minX, minY индексы;
             int minX = 0;
             int minY = 0;
-            long minDistance = long.MaxValue;
-            long minStartDistance = long.MaxValue;
 
-            Operation fnYSearch = YSearch();
-            while (fnYSearch(out int indY1, out int yVal1, out int dy))
+            int distMin = int.MaxValue;
+            double radMin = double.PositiveInfinity;
+
+            Operation Search = YSearch();
+            while (Search(out int indY1, out int yVal1, out int dy))
             {
-                if (minDistance < dy * dy) break;
+                if (distMin < dy * dy) break;
                 List<int> rowX1 = YAxisToXValues[colY[indY1]];
                 BinarySearch(rowX1, out int indX1, out int xVal1, out int dx);
 
-                long distance = dx * dx + dy * dy;
-                long startDistance = xVal1 * xVal1 + yVal1 * yVal1;
+                int distance = dx * dx + dy * dy;
+                double dx1 = massCenterX - xVal1;
+                double dy1 = massCenterY - yVal1;
+                double radius = dx1 * dx1 + dy1 * dy1;
 
-                if (distance <= minDistance & startDistance < minStartDistance)
-                {
-                    minY = indY1;
-                    minX = indX1;
-                    minDistance = distance;
-                    minStartDistance = startDistance;
-                }
+                if (distance > distMin)
+                    continue;
+                if (distance == distMin & radius > radMin)
+                    continue;
+
+                minY = indY1;
+                minX = indX1;
+                distMin = distance;
+                radMin = radius;
             }
             return (minX, minY);
         }
@@ -246,7 +262,6 @@ namespace исследование
             return Inner;
         }
         
-
         private void BinarySearch(List<int> list, out int indX1, out int xVal1, out int dx)
         {
             // Поиск индекса ближайшего к xVal числа в списке list;
@@ -269,8 +284,16 @@ namespace исследование
                     else
                         right = i;
                 }
-
-                if (list[right] - xVal < xVal - list[left])
+                int dr = list[right] - xVal;
+                int dl = xVal - list[left];
+                if (dr == dl)
+                {
+                    if (Math.Abs(massCenterX - list[right]) < Math.Abs(massCenterX - list[left]))
+                        indX1 = right;
+                    else
+                        indX1 = left;
+                }
+                else if (dr < dl)
                     indX1 = right;
                 else
                     indX1 = left;
