@@ -7,14 +7,10 @@ namespace sortings
 {
     internal class InterpolationSort
     {
-        private int indX;
-        private int indY;
         private int xVal;
         private int yVal;
-        private int xSum = 0;
-        private int ySum = 0;
-        double massCenterX = 0;
-        double massCenterY = 0;
+        private double refX;
+        private double refY;
         private readonly int length;
         private Coordinates coords;
         private List<int> colY;
@@ -33,144 +29,119 @@ namespace sortings
 
             for (int i = 0; i < length; i++)
                 YAxisToXValues[coords.Y[i]].Add(coords.X[i]);
-
-            xVal = 0;
-            indY = 0;
-            yVal = colY[0];
         }
 
         public void Sort(int[] sortedX, int[] sortedY, ref int unsortedCount)
         {
+            xVal = 0;
+            yVal = colY[0];
+            int indY = 0;
+            int xSum = 0;
+            int ySum = 0;
+            int k = 1;
+
             unsortedCount = length;
             for (int i = 0; i < length; i++)
             {
-                (indX, indY) = GetNearestCoord();
+                xSum += xVal;
+                ySum += xVal;
+                refX = (xSum / (i + k) * 0.1 + 0.9 * xVal);
+                refY = (ySum / (i + k) * 0.1 + 0.9 * yVal);
+                GetNearestCoord(out int indX, out indY, out double distance, indY);
+                if (distance > 3)
+                {
+                    xSum = 0;
+                    ySum = 0;
+                    k = -i;
+                }
+
                 yVal = colY[indY];
                 List<int> rowX = YAxisToXValues[yVal];
                 xVal = rowX[indX];
+
                 sortedX[i] = xVal;
                 sortedY[i] = yVal;
+
                 rowX.RemoveAt(indX);
                 if (rowX.Count == 0)
                 {
                     colY.RemoveAt(indY);
                     YAxisToXValues.Remove(yVal);
                 }
-                unsortedCount--;
-
-                xSum += xVal;
-                ySum += xVal;
-                massCenterX = xSum / (i + 1);
-                massCenterY = ySum / (i + 1);
+                unsortedCount--;   
             }
         }
-
-        private (int, int) GetNearestCoord()
+        private void GetNearestCoord(out int indMinX, out int indMinY, out double distMin, int indY)
         {
-            // Ищет координаты ближайшей к (indX, indY) точки;
-            // minX, minY индексы;
-            int minX = 0;
-            int minY = 0;
-
-            int distMin = int.MaxValue;
-            double radMin = double.PositiveInfinity;
-
-            Operation Search = YSearch();
-            while (Search(out int indY1, out int yVal1, out int dy))
+            indMinX = 0;
+            indMinY = 0;
+            distMin = double.PositiveInfinity;
+            foreach (int indY1 in YSearch(indY))
             {
-                if (distMin < dy * dy) break;
-                List<int> rowX1 = YAxisToXValues[colY[indY1]];
-                BinarySearch(rowX1, out int indX1, out int xVal1, out int dx);
-
-                int distance = dx * dx + dy * dy;
-                double dx1 = massCenterX - xVal1;
-                double dy1 = massCenterY - yVal1;
-                double radius = dx1 * dx1 + dy1 * dy1;
-
-                if (distance > distMin)
-                    continue;
-                if (distance == distMin & radius > radMin)
-                    continue;
-
-                minY = indY1;
-                minX = indX1;
-                distMin = distance;
-                radMin = radius;
+                int y = colY[indY1];
+                List<int> rowX1 = YAxisToXValues[y];
+                foreach (int indX1 in BinarySearch(rowX1, (int)refX))
+                {
+                    int x = rowX1[indX1];
+                    double dx = refX - x;
+                    double dy = refY - y;
+                    double distance = dx * dx + dy * dy;
+                    if (distance < distMin)
+                    {
+                        indMinX = indX1;
+                        indMinY = indY1;
+                        distMin = distance;
+                    }
+                    if (distMin < dy * dy)
+                    {
+                        return;
+                    }
+                }             
             }
-            return (minX, minY);
         }
 
-        private Operation YSearch()
+        private IEnumerable<int> YSearch(int indY)
         {
+            int i;
             int up = indY;
             int down = indY - 1;
-
-            bool Inner(out int indY1, out int yVal1, out int dy)
+            while (true)
             {
-                indY1 = 0;
-                yVal1 = 0;
-                dy = 0;
-
                 if (down >= 0 & up < colY.Count)
                 {
                     if (yVal - colY[down] < colY[up] - yVal)
-                        indY1 = down--;
+                        i = down--;
                     else
-                        indY1 = up++;
+                        i = up++;
                 }
                 else if (down >= 0)
-                    indY1 = down--;
+                    i = down--;
                 else if (up < colY.Count)
-                    indY1 = up++;
-                else
-                    return false;
-
-                yVal1 = colY[indY1];
-                dy = yVal1 - yVal;
-                return true;
+                    i = up++;
+                else break;
+                yield return i;
             }
-            return Inner;
         }
 
-        private void BinarySearch(List<int> list, out int indX1, out int xVal1, out int dx)
+        private int[] BinarySearch(List<int> list, int x)
         {
-            // Поиск индекса ближайшего к xVal числа в списке list;
-            // i, firs, right - индексы в списке list;
-
             int right = list.Count - 1;
             int left = 0;
 
-            if (xVal <= list[left])
-                indX1 = left;
-            else if (xVal >= list[right])
-                indX1 = right;
-            else
-            {
-                while (right - left > 1)
-                {
-                    int i = left + 1 + (right - left - 2) * (xVal - list[left]) / (list[right] - list[left]);
-                    if (xVal > list[i])
-                        left = i;
-                    else
-                        right = i;
-                }
-                int dr = list[right] - xVal;
-                int dl = xVal - list[left];
-                if (dr == dl)
-                {
-                    if (Math.Abs(massCenterX - list[right]) < Math.Abs(massCenterX - list[left]))
-                        indX1 = right;
-                    else
-                        indX1 = left;
-                }
-                else if (dr < dl)
-                    indX1 = right;
-                else
-                    indX1 = left;
-            }
+            if (x <= list[left])
+                right = left;
+            else if (x >= list[right])
+                left = right;
 
-            xVal1 = list[indX1];
-            dx = xVal1 - xVal;
+            while (right - left > 1)
+            {
+                int i = left + 1 + (right - left - 2) * (x - list[left]) / (list[right] - list[left]);
+                if (x > list[i])
+                    left = i;
+                else
+                    right = i;
+            }
+            return new int[] {left, right};
         }
     }
 }
