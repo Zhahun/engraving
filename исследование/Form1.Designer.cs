@@ -28,101 +28,193 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.label12 = new System.Windows.Forms.Label();
-            this.buttonOpen = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonSave = new System.Windows.Forms.Button();
-            this.buttonSort = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.labelSpeed = new System.Windows.Forms.Label();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.ris = new System.Windows.Forms.Timer(this.components);
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.ost_sort = new System.Windows.Forms.Timer(this.components);
-            this.label13 = new System.Windows.Forms.Label();
-            this.textBoxKY = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.textBoxKX = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.saveDiskLabel = new System.Windows.Forms.Label();
-            this.drivesComboBox = new System.Windows.Forms.ComboBox();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
-            this.groupBox1.SuspendLayout();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.buttonOpen = new System.Windows.Forms.Button();
+            this.buttonSort = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label12
+            // splitContainer1
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(7, 4);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(109, 13);
-            this.label12.TabIndex = 213;
-            this.label12.Text = "Способ сортировки:";
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
             // 
-            // buttonOpen
+            // splitContainer1.Panel1
             // 
-            this.buttonOpen.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonOpen.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.buttonOpen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonOpen.Location = new System.Drawing.Point(208, 20);
-            this.buttonOpen.Name = "buttonOpen";
-            this.buttonOpen.Size = new System.Drawing.Size(124, 35);
-            this.buttonOpen.TabIndex = 136;
-            this.buttonOpen.Text = "ОТКРЫТЬ";
-            this.buttonOpen.UseVisualStyleBackColor = false;
-            this.buttonOpen.Click += new System.EventHandler(this.buttonOpen_Click);
+            this.splitContainer1.Panel1.Controls.Add(this.textBox3);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox4);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox3);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.listBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
+            this.splitContainer1.Panel1.Padding = new System.Windows.Forms.Padding(3);
             // 
-            // panel1
+            // splitContainer1.Panel2
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.buttonSave);
-            this.panel1.Controls.Add(this.buttonSort);
-            this.panel1.Controls.Add(this.listBox1);
-            this.panel1.Controls.Add(this.label12);
-            this.panel1.Controls.Add(this.buttonOpen);
-            this.panel1.Location = new System.Drawing.Point(6, 13);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(344, 153);
-            this.panel1.TabIndex = 224;
+            this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
+            this.splitContainer1.Size = new System.Drawing.Size(894, 500);
+            this.splitContainer1.SplitterDistance = 361;
+            this.splitContainer1.TabIndex = 248;
             // 
-            // buttonSave
+            // textBox3
             // 
-            this.buttonSave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonSave.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.buttonSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonSave.Location = new System.Drawing.Point(207, 102);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(125, 35);
-            this.buttonSave.TabIndex = 216;
-            this.buttonSave.Text = "СОХРАНИТЬ";
-            this.buttonSave.UseVisualStyleBackColor = false;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBox3.Location = new System.Drawing.Point(6, 341);
+            this.textBox3.Multiline = true;
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(348, 149);
+            this.textBox3.TabIndex = 144;
             // 
-            // buttonSort
+            // groupBox4
             // 
-            this.buttonSort.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.buttonSort.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.buttonSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonSort.Location = new System.Drawing.Point(207, 61);
-            this.buttonSort.Name = "buttonSort";
-            this.buttonSort.Size = new System.Drawing.Size(125, 35);
-            this.buttonSort.TabIndex = 215;
-            this.buttonSort.Text = "СОРТИРОВАТЬ";
-            this.buttonSort.UseVisualStyleBackColor = false;
-            this.buttonSort.Click += new System.EventHandler(this.buttonSort_Click);
+            this.groupBox4.Controls.Add(this.trackBar1);
+            this.groupBox4.Controls.Add(this.checkBox1);
+            this.groupBox4.Location = new System.Drawing.Point(6, 237);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(348, 98);
+            this.groupBox4.TabIndex = 143;
+            this.groupBox4.TabStop = false;
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.AllowDrop = true;
+            this.trackBar1.Location = new System.Drawing.Point(6, 49);
+            this.trackBar1.Maximum = 100;
+            this.trackBar1.Minimum = 1;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(324, 45);
+            this.trackBar1.TabIndex = 2;
+            this.trackBar1.TickFrequency = 4;
+            this.trackBar1.Value = 20;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(99, 19);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBox1.Size = new System.Drawing.Size(123, 17);
+            this.checkBox1.TabIndex = 1;
+            this.checkBox1.Text = "Имитация прожига";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.comboBox1);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Location = new System.Drawing.Point(176, 164);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(178, 67);
+            this.groupBox3.TabIndex = 142;
+            this.groupBox3.TabStop = false;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(28, 37);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.TabIndex = 141;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(42, 16);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(87, 13);
+            this.label4.TabIndex = 140;
+            this.label4.Text = "Выберите диск:";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Controls.Add(this.textBox2);
+            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Location = new System.Drawing.Point(7, 163);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(0);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(146, 67);
+            this.groupBox2.TabIndex = 139;
+            this.groupBox2.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(3, 41);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(90, 13);
+            this.label3.TabIndex = 142;
+            this.label3.Text = "Коэффициент Y:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(90, 13);
+            this.label2.TabIndex = 141;
+            this.label2.Text = "Коэффициент X:";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(99, 38);
+            this.textBox2.MaxLength = 5;
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(40, 20);
+            this.textBox2.TabIndex = 140;
+            this.textBox2.Text = "12345";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(99, 13);
+            this.textBox1.MaxLength = 5;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(40, 20);
+            this.textBox1.TabIndex = 0;
+            this.textBox1.Text = "12345";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(121, 13);
+            this.label1.TabIndex = 138;
+            this.label1.Text = "Выберите сортировку:";
             // 
             // listBox1
             // 
@@ -135,240 +227,137 @@
             "проб 2",
             "проб 3",
             "проб 4"});
-            this.listBox1.Location = new System.Drawing.Point(6, 20);
+            this.listBox1.Location = new System.Drawing.Point(6, 33);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(196, 121);
-            this.listBox1.TabIndex = 214;
-            // 
-            // labelSpeed
-            // 
-            this.labelSpeed.AutoSize = true;
-            this.labelSpeed.Location = new System.Drawing.Point(264, 25);
-            this.labelSpeed.Name = "labelSpeed";
-            this.labelSpeed.Size = new System.Drawing.Size(49, 13);
-            this.labelSpeed.TabIndex = 237;
-            this.labelSpeed.Text = "Сорость";
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox3.Cursor = System.Windows.Forms.Cursors.Default;
-            this.checkBox3.Location = new System.Drawing.Point(14, 24);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(147, 17);
-            this.checkBox3.TabIndex = 236;
-            this.checkBox3.Text = "ИМИТАЦИЯ ПРОЖИГА";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
-            // 
-            // chart1
-            // 
-            this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.chart1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.chart1.BorderlineColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.chart1.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.AxisX.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
-            chartArea1.AxisY.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
-            chartArea1.Name = "engraving";
-            this.chart1.ChartAreas.Add(chartArea1);
-            this.chart1.Location = new System.Drawing.Point(375, 9);
-            this.chart1.Margin = new System.Windows.Forms.Padding(0);
-            this.chart1.MaximumSize = new System.Drawing.Size(2048, 1080);
-            this.chart1.MinimumSize = new System.Drawing.Size(360, 360);
-            this.chart1.Name = "chart1";
-            series1.ChartArea = "engraving";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
-            series1.LabelForeColor = System.Drawing.Color.Blue;
-            series1.MarkerSize = 1;
-            series1.Name = "raw";
-            series1.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series1.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series2.ChartArea = "engraving";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastPoint;
-            series2.LabelForeColor = System.Drawing.Color.Red;
-            series2.Name = "engraved";
-            series2.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            series2.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Int32;
-            this.chart1.Series.Add(series1);
-            this.chart1.Series.Add(series2);
-            this.chart1.Size = new System.Drawing.Size(802, 543);
-            this.chart1.SuppressExceptions = true;
-            this.chart1.TabIndex = 5;
-            this.chart1.Text = "engraving";
-            // 
-            // ris
-            // 
-            this.ris.Tick += new System.EventHandler(this.ris_Tick);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Location = new System.Drawing.Point(6, 286);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(344, 270);
-            this.textBox1.TabIndex = 239;
-            // 
-            // ost_sort
-            // 
-            this.ost_sort.Tick += new System.EventHandler(this.ost_sort_Tick);
-            // 
-            // label13
-            // 
-            this.label13.Location = new System.Drawing.Point(17, 198);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(82, 29);
-            this.label13.TabIndex = 243;
-            this.label13.Text = "Множитель Y: ";
-            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // textBoxKY
-            // 
-            this.textBoxKY.Location = new System.Drawing.Point(101, 203);
-            this.textBoxKY.MaxLength = 5;
-            this.textBoxKY.Name = "textBoxKY";
-            this.textBoxKY.Size = new System.Drawing.Size(44, 20);
-            this.textBoxKY.TabIndex = 242;
-            this.textBoxKY.Text = "160";
-            this.textBoxKY.TextChanged += new System.EventHandler(this.textBoxKY_TextChanged);
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(14, 177);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(85, 25);
-            this.label11.TabIndex = 241;
-            this.label11.Text = "Множитель X:";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // textBoxKX
-            // 
-            this.textBoxKX.Location = new System.Drawing.Point(101, 180);
-            this.textBoxKX.MaxLength = 5;
-            this.textBoxKX.Name = "textBoxKX";
-            this.textBoxKX.Size = new System.Drawing.Size(44, 20);
-            this.textBoxKX.TabIndex = 240;
-            this.textBoxKX.Tag = "";
-            this.textBoxKX.Text = "160";
-            this.textBoxKX.TextChanged += new System.EventHandler(this.textBoxKX_TextChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(206, 24);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 13);
-            this.label1.TabIndex = 244;
-            this.label1.Text = "Сорость:";
+            this.listBox1.Size = new System.Drawing.Size(206, 121);
+            this.listBox1.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.labelSpeed);
-            this.groupBox1.Controls.Add(this.checkBox3);
-            this.groupBox1.Location = new System.Drawing.Point(6, 225);
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Controls.Add(this.buttonOpen);
+            this.groupBox1.Controls.Add(this.buttonSort);
+            this.groupBox1.Controls.Add(this.buttonSave);
+            this.groupBox1.Location = new System.Drawing.Point(216, 23);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
+            this.groupBox1.MaximumSize = new System.Drawing.Size(0, 135);
+            this.groupBox1.MinimumSize = new System.Drawing.Size(130, 135);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(344, 55);
-            this.groupBox1.TabIndex = 245;
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(5);
+            this.groupBox1.Size = new System.Drawing.Size(138, 135);
+            this.groupBox1.TabIndex = 137;
             this.groupBox1.TabStop = false;
             // 
-            // groupBox2
+            // buttonOpen
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.groupBox2.Controls.Add(this.saveDiskLabel);
-            this.groupBox2.Controls.Add(this.drivesComboBox);
-            this.groupBox2.Controls.Add(this.label13);
-            this.groupBox2.Controls.Add(this.groupBox1);
-            this.groupBox2.Controls.Add(this.textBoxKY);
-            this.groupBox2.Controls.Add(this.textBox1);
-            this.groupBox2.Controls.Add(this.label11);
-            this.groupBox2.Controls.Add(this.textBoxKX);
-            this.groupBox2.Controls.Add(this.panel1);
-            this.groupBox2.Location = new System.Drawing.Point(5, -4);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(0);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(356, 564);
-            this.groupBox2.TabIndex = 246;
-            this.groupBox2.TabStop = false;
+            this.buttonOpen.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.buttonOpen.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonOpen.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonOpen.Location = new System.Drawing.Point(5, 10);
+            this.buttonOpen.Name = "buttonOpen";
+            this.buttonOpen.Size = new System.Drawing.Size(128, 40);
+            this.buttonOpen.TabIndex = 138;
+            this.buttonOpen.Text = "ОТКРЫТЬ";
+            this.buttonOpen.UseVisualStyleBackColor = false;
+            this.buttonOpen.Click += new System.EventHandler(this.buttonOpen_Click);
             // 
-            // saveDiskLabel
+            // buttonSort
             // 
-            this.saveDiskLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.saveDiskLabel.Location = new System.Drawing.Point(177, 177);
-            this.saveDiskLabel.Name = "saveDiskLabel";
-            this.saveDiskLabel.Size = new System.Drawing.Size(173, 22);
-            this.saveDiskLabel.TabIndex = 247;
-            this.saveDiskLabel.Text = "Выберите куда сохранить";
-            this.saveDiskLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.buttonSort.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.buttonSort.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonSort.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonSort.Location = new System.Drawing.Point(5, 50);
+            this.buttonSort.Name = "buttonSort";
+            this.buttonSort.Size = new System.Drawing.Size(128, 40);
+            this.buttonSort.TabIndex = 137;
+            this.buttonSort.Text = "СОРТИРОВАТЬ";
+            this.buttonSort.UseVisualStyleBackColor = false;
+            this.buttonSort.Click += new System.EventHandler(this.buttonSort_Click);
             // 
-            // drivesComboBox
+            // buttonSave
             // 
-            this.drivesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.drivesComboBox.FormattingEnabled = true;
-            this.drivesComboBox.Items.AddRange(new object[] {
-            "Диск не выбран"});
-            this.drivesComboBox.Location = new System.Drawing.Point(177, 202);
-            this.drivesComboBox.Name = "drivesComboBox";
-            this.drivesComboBox.Size = new System.Drawing.Size(172, 21);
-            this.drivesComboBox.TabIndex = 246;
-            this.drivesComboBox.DropDown += new System.EventHandler(this.drivesComboBox_DropDown);
+            this.buttonSave.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonSave.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.buttonSave.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonSave.Location = new System.Drawing.Point(5, 90);
+            this.buttonSave.Margin = new System.Windows.Forms.Padding(0);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(128, 40);
+            this.buttonSave.TabIndex = 139;
+            this.buttonSave.Text = "СОХРАНИТЬ";
+            this.buttonSave.UseVisualStyleBackColor = false;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(525, 496);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
+            this.pictureBox1.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseWheel);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.Filter = "Images|*.bmp";
             // 
             // Form1
             // 
-            this.AllowDrop = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1184, 561);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.chart1);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.ClientSize = new System.Drawing.Size(894, 500);
+            this.Controls.Add(this.splitContainer1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(2048, 1080);
             this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Выжигатель 3000";
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Button buttonOpen;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.Label labelSpeed;
-        private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
-        private System.Windows.Forms.Timer ris;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Timer ost_sort;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox textBoxKY;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBoxKX;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button buttonOpen;
         private System.Windows.Forms.Button buttonSort;
-        private System.Windows.Forms.Label saveDiskLabel;
-        private System.Windows.Forms.ComboBox drivesComboBox;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TextBox textBox3;
     }
 }
 
